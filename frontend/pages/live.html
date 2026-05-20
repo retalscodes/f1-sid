@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Dashboard — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+  <style>
+    .pos-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      transition: all 0.3s;
+    }
+    .pos-card.leader { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.04); }
+    .pos-num { font-family: var(--font-mono); font-weight: 900; font-size: 1.1rem; min-width: 28px; }
+    .driver-short { font-family: var(--font-mono); font-weight: 900; font-size: 0.95rem; }
+    .gap-text { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-dim); margin-left: auto; }
+    .rc-item { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.83rem; }
+    .rc-flag   { color: #E8E800; }
+    .rc-sc     { color: #FF8C00; }
+    .rc-vsc    { color: #FFA500; }
+    .rc-red    { color: var(--red); }
+    .rc-green  { color: var(--green); }
+    .radio-item { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.83rem; }
+    .radio-driver { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html" class="active">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <!-- Status banner -->
+  <div id="statusBanner" style="padding:1rem 2rem;border-bottom:1px solid var(--border);background:var(--bg2);">
+    <div style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div id="sessionName" style="font-family:var(--font-mono);font-weight:700;font-size:1rem;"></div>
+        <div id="sessionDetails" style="font-size:0.8rem;color:var(--text-dim);margin-top:2px;"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <div id="liveStatusBadge"></div>
+        <div id="weatherSummary" style="font-size:0.83rem;color:var(--text-dim);"></div>
+        <button class="btn btn-ghost" style="font-size:0.75rem;padding:0.4rem 0.9rem;" onclick="refreshAll()">↻ Refresh</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Session State -->
+  <div id="noSession" style="display:none;">
+    <div style="max-width:600px;margin:6rem auto;text-align:center;padding:2rem;">
+      <div style="font-size:4rem;margin-bottom:1rem;">🦥</div>
+      <h2 class="font-mono fw-700" style="margin-bottom:1rem;color:var(--red);">No Live Session</h2>
+      <p style="color:var(--text-dim);margin-bottom:2rem;" id="noSessionMsg">There's no active F1 session right now. Check the race calendar for the next event!</p>
+      <div id="nextSessionInfo" style="margin-bottom:2rem;"></div>
+      <a href="../index.html" class="btn btn-primary">← Back to Home</a>
+    </div>
+  </div>
+
+  <!-- Live Content -->
+  <div id="liveContent" style="display:none;">
+    <div style="max-width:1400px;margin:0 auto;padding:1.5rem 2rem;">
+
+      <!-- Session Tabs -->
+      <div class="tabs" style="margin-bottom:1.5rem;" id="sessionTabs"></div>
+
+      <div class="grid-2" style="gap:1.5rem;align-items:start;">
+
+        <!-- LEFT: Positions -->
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">
+            Race Order
+            <span id="lapInfo" style="margin-left:1rem;color:var(--text);font-size:0.9rem;"></span>
+          </div>
+          <div id="positionsList" style="display:flex;flex-direction:column;gap:0.4rem;"></div>
+        </div>
+
+        <!-- RIGHT: Stints & Controls -->
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
+          <!-- Race Control -->
+          <div class="card card-accent">
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">
+              🚦 Race Control
+            </div>
+            <div id="raceControlList" style="max-height:200px;overflow-y:auto;"></div>
+          </div>
+
+          <!-- Tire Stints -->
+          <div class="card">
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">
+              🔴 Tire Strategy
+            </div>
+            <div id="stintsList" style="max-height:260px;overflow-y:auto;"></div>
+          </div>
+
+          <!-- Team Radio -->
+          <div class="card">
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">
+              📻 Team Radio
+            </div>
+            <div id="radioList" style="max-height:220px;overflow-y:auto;font-size:0.83rem;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pit Stop History -->
+      <div class="card" style="margin-top:1.5rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">
+          🔧 Pit Stops
+        </div>
+        <div id="pitStopsList" style="overflow-x:auto;">
+          <table class="standings-table" id="pitTable">
+            <thead><tr><th>Driver</th><th>Lap</th><th>Duration</th><th>Stop #</th></tr></thead>
+            <tbody id="pitBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Last Race Recap (when no live session) -->
+  <div id="lastRaceRecap" style="display:none;max-width:1000px;margin:0 auto;padding:2rem;">
+    <div class="section-tag">Last Race Recap</div>
+    <h2 class="section-title" id="recapTitle" style="margin-bottom:1.5rem;"></h2>
+    <div id="recapContent"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><div class="fallback">🦥</div></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Online</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">LIGHTS OUT AND AWAY WE GO!! 🚦🦥 Ask me what's happening!</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid..." />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle"><span class="fallback-face">🦥</span></button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+let activeSessionKey = null;
+let pollInterval = null;
+let allSessions = [];
+
+const TIRE_COLORS = { SOFT: '#FF1E00', MEDIUM: '#FFD700', HARD: '#F0F0F0', INTERMEDIATE: '#39B54A', WET: '#1E90FF' };
+const TIRE_LABELS = { SOFT: 'S', MEDIUM: 'M', HARD: 'H', INTERMEDIATE: 'I', WET: 'W' };
+const RC_CLASSES = { YELLOW_FLAG: 'rc-flag', SAFETY_CAR: 'rc-sc', VIRTUAL_SAFETY_CAR: 'rc-vsc', RED_FLAG: 'rc-red', GREEN_LIGHT: 'rc-green', CLEAR: 'rc-green' };
+
+async function init() {
+  const status = await API.getLiveStatus();
+  if (!status) { showNoSession('Unable to connect to live data.'); return; }
+
+  if (status.active && status.session) {
+    activeSessionKey = status.session.session_key;
+    showLiveSession(status.session, status.meeting);
+    startPolling();
+  } else if (status.upcoming_session) {
+    showNoSession(`Next session: ${status.upcoming_session.session_name} — ${new Date(status.upcoming_session.date_start).toLocaleString()}`, status.upcoming_session);
+    loadLastRaceRecap();
+  } else {
+    showNoSession('Between race weekends. See you at the next one!');
+    loadLastRaceRecap();
+  }
+}
+
+function showNoSession(msg, nextSession) {
+  document.getElementById('noSession').style.display = 'block';
+  document.getElementById('noSessionMsg').textContent = msg;
+  if (nextSession) {
+    document.getElementById('nextSessionInfo').innerHTML = `
+      <div class="card" style="display:inline-block;padding:1rem 1.5rem;">
+        <div class="section-tag">Up Next</div>
+        <div class="font-mono fw-700">${nextSession.session_name}</div>
+        <div style="color:var(--text-dim);font-size:0.85rem;">${nextSession.meeting_name || ''}</div>
+      </div>`;
+  }
+}
+
+function showLiveSession(session, meeting) {
+  document.getElementById('noSession').style.display = 'none';
+  document.getElementById('liveContent').style.display = 'block';
+  document.getElementById('sessionName').textContent = `${meeting?.meeting_name || ''} — ${session.session_name}`;
+  document.getElementById('sessionDetails').textContent = `${session.circuit_short_name || ''} · ${session.country_name || ''}`;
+  document.getElementById('liveStatusBadge').innerHTML = '<span class="live-badge"><span class="pulse"></span>LIVE</span>';
+}
+
+async function refreshAll() {
+  if (!activeSessionKey) return;
+  await Promise.all([loadPositions(), loadRaceControl(), loadStints(), loadRadio(), loadPitStops()]);
+}
+
+async function loadPositions() {
+  const positions = await API.getLivePositions(activeSessionKey);
+  if (!positions) return;
+  const intervals = await API.getLiveIntervals(activeSessionKey);
+  const intMap = {};
+  if (intervals) intervals.forEach(i => { intMap[i.driver_number] = i; });
+
+  const el = document.getElementById('positionsList');
+  el.innerHTML = positions.slice(0, 20).map((p, i) => {
+    const color = p.team_colour || '#888888';
+    const interval = intMap[p.driver_number];
+    const gap = interval?.gap_to_leader || (i === 0 ? 'LEADER' : '—');
+    return `
+      <div class="pos-card ${i === 0 ? 'leader' : ''}">
+        <div class="pos-num ${posClass(p.position)}">${p.position}</div>
+        <div style="width:4px;height:36px;border-radius:2px;background:${color};flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div class="driver-short">${p.short_name || '???'}</div>
+          <div style="font-size:0.72rem;color:var(--text-dim);">${p.team || ''}</div>
+        </div>
+        <div class="gap-text">${typeof gap === 'number' ? '+' + gap.toFixed(3) : gap}</div>
+      </div>`;
+  }).join('');
+}
+
+async function loadRaceControl() {
+  const data = await API.getRaceControl(activeSessionKey);
+  if (!data) return;
+  const el = document.getElementById('raceControlList');
+  el.innerHTML = data.slice(0, 15).map(m => {
+    const cls = RC_CLASSES[m.category] || '';
+    const time = m.date ? new Date(m.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
+    return `<div class="rc-item ${cls}"><span style="opacity:0.5;margin-right:0.5rem;">${time}</span>${m.message || m.flag || m.category}</div>`;
+  }).join('') || '<div class="rc-item text-dim">No messages yet.</div>';
+}
+
+async function loadStints() {
+  const data = await API.getLiveStints(activeSessionKey);
+  if (!data) return;
+  const latest = {};
+  data.forEach(s => {
+    const key = s.driver_number;
+    if (!latest[key] || s.stint_number > latest[key].stint_number) latest[key] = s;
+  });
+  const el = document.getElementById('stintsList');
+  el.innerHTML = Object.values(latest).slice(0, 15).map(s => {
+    const compound = s.compound || 'UNKNOWN';
+    const tc = TIRE_COLORS[compound] || '#888';
+    const tl = TIRE_LABELS[compound] || '?';
+    return `
+      <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+        <div style="width:3px;height:32px;background:${s.team_colour||'#888'};border-radius:2px;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div class="fw-700" style="font-size:0.85rem;">${s.driver_name || s.driver_number}</div>
+          <div style="font-size:0.72rem;color:var(--text-dim);">Stint ${s.stint_number} · Lap ${s.lap_start||'?'}–${s.lap_end||'?'}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div class="tire tire-${tl}" style="background:${tc};color:${compound==='MEDIUM'||compound==='HARD'?'#000':'#fff'}">${tl}</div>
+          <span style="font-size:0.75rem;color:var(--text-dim);">${s.tyre_age_at_start||0}L old</span>
+        </div>
+      </div>`;
+  }).join('') || '<div class="text-dim" style="padding:0.5rem;">No stint data yet.</div>';
+}
+
+async function loadRadio() {
+  const data = await API.getTeamRadio(activeSessionKey);
+  if (!data) return;
+  const el = document.getElementById('radioList');
+  el.innerHTML = data.slice(0, 12).map(r => {
+    const color = r.team_colour || '#888888';
+    const time = r.date ? new Date(r.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
+    return `
+      <div class="radio-item">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:3px;">
+          <div style="width:3px;height:14px;background:${color};border-radius:1px;"></div>
+          <span class="radio-driver" style="color:${color};">${r.driver_name || r.driver_number}</span>
+          <span style="color:var(--text-dim);font-size:0.7rem;margin-left:auto;">${time}</span>
+        </div>
+        ${r.recording_url ? `<audio controls style="width:100%;height:28px;opacity:0.8;" src="${r.recording_url}"></audio>` : '<span style="color:var(--text-dim)">Audio not available</span>'}
+      </div>`;
+  }).join('') || '<div class="text-dim" style="padding:0.5rem;">No radio yet.</div>';
+}
+
+async function loadPitStops() {
+  const data = await API.getLivePitStops(activeSessionKey);
+  if (!data?.length) return;
+  const tbody = document.getElementById('pitBody');
+  tbody.innerHTML = [...data].sort((a, b) => b.lap_number - a.lap_number).slice(0, 20).map(p => `
+    <tr>
+      <td>${p.driver_number}</td>
+      <td class="font-mono">${p.lap_number}</td>
+      <td class="font-mono text-green">${p.pit_duration?.toFixed(3) || '—'}s</td>
+      <td class="font-mono text-dim">${p.stop_number || 1}</td>
+    </tr>`).join('');
+}
+
+async function loadLastRaceRecap() {
+  document.getElementById('lastRaceRecap').style.display = 'block';
+  const year = new Date().getFullYear();
+  const schedule = await API.getSchedule(year);
+  if (!schedule) return;
+  const now = new Date().toISOString().slice(0,10);
+  const past = schedule.filter(r => r.date <= now);
+  if (!past.length) return;
+  const last = past[past.length - 1];
+  document.getElementById('recapTitle').innerHTML = `${getFlag(last.Circuit?.Location?.country||'')} ${last.raceName} — Round ${last.round}`;
+  const weekend = await API.getRaceWeekend(year, last.round);
+  if (!weekend?.result?.Results) return;
+  const results = weekend.result.Results;
+  document.getElementById('recapContent').innerHTML = `
+    <table class="standings-table">
+      <thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Points</th><th>Status</th></tr></thead>
+      <tbody>
+        ${results.slice(0, 10).map(r => `
+          <tr>
+            <td><span class="${posClass(r.position)}">${r.position}</span></td>
+            <td>${getFlag(r.Driver.nationality)} ${r.Driver.givenName} <strong>${r.Driver.familyName}</strong>
+              ${r.FastestLap?.rank === '1' ? '<span class="badge badge-green" style="margin-left:0.5rem;">FL</span>' : ''}
+            </td>
+            <td style="color:var(--text-dim);font-size:0.85rem;">${r.Constructor.name}</td>
+            <td class="font-mono text-red">${r.points}</td>
+            <td style="font-size:0.8rem;color:${r.status==='Finished'?'var(--text-dim)':'var(--red)'};">${r.status}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function startPolling() {
+  refreshAll();
+  pollInterval = setInterval(refreshAll, 8000);
+}
+
+init();
+</script>
+</body>
+</html>

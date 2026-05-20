@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SID'S F1 HUB — The Unofficial Sloth's Guide to Formula 1</title>
+  <meta name="description" content="F1 live data, race predictions, history, and Sid the Sloth's hot takes." />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="sid-icon-fallback">🦥</div>
+    SID'S F1 HUB
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="pages/live.html">Live</a></li>
+    <li><a href="pages/predictions.html">Predictions</a></li>
+    <li><a href="pages/history.html">History</a></li>
+    <li><a href="pages/head-to-head.html">H2H</a></li>
+    <li><a href="pages/circuit.html">Circuits</a></li>
+    <li><a href="pages/quiz.html">Quiz</a></li>
+    <li><a href="pages/glossary.html">Glossary</a></li>
+    <li><a href="pages/silly-season.html">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="hero-content fade-in">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Formula 1 · Season 2026
+    </div>
+    <h1 class="hero-title">
+      <span class="line1">SID'S</span><br>
+      <span class="accent">F1 HUB</span>
+    </h1>
+    <p class="hero-subtitle">
+      Live race data, predictions, history, and the hot takes of a sloth who probably knows more about F1 than you do.
+    </p>
+
+    <!-- START LIGHTS -->
+    <div class="lights-row" id="lightsRow">
+      <div class="light" id="l1"></div>
+      <div class="light" id="l2"></div>
+      <div class="light" id="l3"></div>
+      <div class="light" id="l4"></div>
+      <div class="light" id="l5"></div>
+    </div>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-card" id="countdownCard">
+      <div class="countdown-race" id="countdownLabel">
+        🏁 Loading next race...
+      </div>
+      <div class="countdown-units">
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cdDays">--</div>
+          <div class="countdown-label">Days</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cdHours">--</div>
+          <div class="countdown-label">Hours</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cdMins">--</div>
+          <div class="countdown-label">Mins</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cdSecs">--</div>
+          <div class="countdown-label">Secs</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+      <a href="pages/live.html" class="btn btn-primary">⚡ Live Dashboard</a>
+      <a href="pages/predictions.html" class="btn btn-outline">🎯 Predict With Friends</a>
+    </div>
+  </div>
+
+  <img src="assets/img/sid.png" class="hero-sid" alt="Sid the F1 Sloth"
+       onerror="this.style.display='none'" />
+</section>
+
+<!-- STANDINGS TICKER -->
+<div class="ticker-bar" id="tickerBar">
+  <div class="ticker-label">⚡ CHAMPIONSHIP</div>
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="tickerTrack">
+      <span style="color:rgba(255,255,255,0.7);padding-left:1rem;">Loading standings…</span>
+    </div>
+  </div>
+</div>
+
+<!-- RACE CALENDAR STRIP -->
+<div style="background:var(--bg);border-bottom:1px solid var(--border);padding:1.25rem 0;">
+  <div style="max-width:1400px;margin:0 auto;padding:0 2rem;">
+    <div style="font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">🏁 2026 Season Calendar</div>
+    <div class="calendar-strip" id="calendarStrip">
+      <div class="loading-state" style="padding:0;height:80px;"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RACE WEEKEND -->
+<div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section" style="padding-top:3rem;padding-bottom:3rem;">
+    <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="section-tag">Next Race Weekend</div>
+        <h2 class="section-title" id="weekendTitle">Loading...</h2>
+      </div>
+      <div id="weekendFlag" style="font-size:3rem;"></div>
+    </div>
+
+    <!-- Session Times -->
+    <div class="sessions-grid" id="sessionsGrid">
+      <div class="loading-state"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Weather -->
+    <div id="weatherWidget" style="margin-top:1.5rem;display:none;">
+      <div class="card" style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+        <div>
+          <div class="section-tag">Circuit Weather</div>
+          <div style="font-size:2rem;" id="weatherTemp">--°C</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);" id="weatherDesc"></div>
+        </div>
+        <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+          <div>
+            <div class="text-dim" style="font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;">Wind</div>
+            <div class="font-mono fw-700" id="weatherWind">--</div>
+          </div>
+          <div>
+            <div class="text-dim" style="font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;">Rain %</div>
+            <div class="font-mono fw-700" id="weatherRain">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAMPIONSHIP BATTLE -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-tag">Championship Battle</div>
+    <h2 class="section-title" id="standingsTitle">2026 Standings</h2>
+  </div>
+
+  <div class="grid-2" style="gap:2rem;">
+    <!-- Drivers -->
+    <div>
+      <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">
+        Drivers Championship
+      </div>
+      <div id="driverStandings">
+        <div class="loading-state"><div class="spinner"></div></div>
+      </div>
+    </div>
+    <!-- Constructors -->
+    <div>
+      <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">
+        Constructors Championship
+      </div>
+      <div id="constructorStandings">
+        <div class="loading-state"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK ACCESS -->
+<div style="background:var(--bg2);border-top:1px solid var(--border);">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-tag">Explore</div>
+      <h2 class="section-title">Everything You Need</h2>
+    </div>
+    <div class="grid-4">
+      <a href="pages/live.html" class="card card-accent" style="text-decoration:none;cursor:pointer;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">⚡</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">Live Dashboard</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Real-time positions, tire strategy, race control</div>
+      </a>
+      <a href="pages/predictions.html" class="card card-accent" style="text-decoration:none;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">🎯</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">Predictions</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Create rooms, predict with friends, compete on a leaderboard</div>
+      </a>
+      <a href="pages/history.html" class="card card-accent" style="text-decoration:none;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">📚</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">History</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Every team, every season, every driver</div>
+      </a>
+      <a href="pages/head-to-head.html" class="card card-accent" style="text-decoration:none;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">⚔️</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">Head to Head</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Compare any two drivers across seasons</div>
+      </a>
+      <a href="pages/circuit.html" class="card card-accent" style="text-decoration:none;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">🏎️</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">Circuit DNA</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Track profiles, records, weather, past winners</div>
+      </a>
+      <a href="pages/quiz.html" class="card card-accent" style="text-decoration:none;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">🤔</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">What Team Are You?</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Sid's personality quiz assigns your constructor</div>
+      </a>
+      <a href="pages/glossary.html" class="card card-accent" style="text-decoration:none;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">📖</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">F1 Glossary</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Sid explains F1 terms in his own special way</div>
+      </a>
+      <a href="pages/silly-season.html" class="card card-accent" style="text-decoration:none;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">🔥</div>
+        <div style="font-family:var(--font-mono);font-weight:700;margin-bottom:0.4rem;">Silly Season</div>
+        <div style="font-size:0.8rem;color:var(--text-dim);">Driver transfers, contracts, paddock drama</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- LAST RACE RESULT -->
+<div class="section">
+  <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+      <div class="section-tag">Last Race</div>
+      <h2 class="section-title" id="lastRaceTitle">Recent Results</h2>
+    </div>
+    <div id="sidReaction" style="display:none;" class="card" style="max-width:320px;">
+      <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+        <div style="font-size:1.5rem;flex-shrink:0;">🦥</div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:0.4rem;">Sid's Reaction</div>
+          <div style="font-size:0.85rem;font-style:italic;" id="sidReactionText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="lastRaceResults">
+    <div class="loading-state"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<!-- SID CHAT BUBBLE -->
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar">
+        <img src="../assets/img/sid.png" alt="Sid" onerror="this.parentElement.innerHTML='<div class=fallback>🦥</div>'" />
+      </div>
+      <div>
+        <div class="name">Sid the F1 Sloth</div>
+        <div class="status">Online &amp; ready to ramble</div>
+      </div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">
+        YO! Sid here — your unofficial F1 expert! Ask me anything about Formula 1. Anything. I DARE YOU. 🦥🏎️
+      </div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid about F1..." />
+      <button id="sidSend" aria-label="Send">
+        <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle" aria-label="Chat with Sid">
+    <img src="assets/img/sid.png" alt="Sid" onerror="this.outerHTML='<span class=fallback-face>🦥</span>'" />
+  </button>
+</div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/countdown.js"></script>
+<script src="assets/js/sid-chat.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

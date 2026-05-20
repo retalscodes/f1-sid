@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Glossary — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html" class="active">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div style="background:linear-gradient(135deg,rgba(232,0,45,0.12),transparent 60%),var(--bg2);border-bottom:1px solid var(--border);padding:3rem 2rem;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="section-tag">F1 Glossary</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">📖 Sid Explains F1</h1>
+      <p style="color:var(--text-dim);max-width:540px;">
+        Every F1 term you were afraid to ask about. Click any card to hear Sid's explanation.
+        Warning: Sid's explanations are educational, entertaining, and occasionally concerning.
+      </p>
+      <div style="margin-top:1.5rem;">
+        <input class="input" id="searchInput" placeholder="🔍 Search terms..." style="max-width:340px;" oninput="filterTerms(this.value)" />
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="max-width:1100px;">
+
+    <!-- Category Tabs -->
+    <div class="tabs" style="margin-bottom:2rem;">
+      <button class="tab active" onclick="filterCategory('all')">All</button>
+      <button class="tab" onclick="filterCategory('race')">Race</button>
+      <button class="tab" onclick="filterCategory('tech')">Technical</button>
+      <button class="tab" onclick="filterCategory('strategy')">Strategy</button>
+      <button class="tab" onclick="filterCategory('rules')">Rules</button>
+    </div>
+
+    <div id="glossaryGrid" class="grid-3"></div>
+
+    <div id="noResults" style="display:none;text-align:center;padding:3rem;color:var(--text-dim);">
+      <div style="font-size:3rem;margin-bottom:1rem;">🦥</div>
+      <div>Sid doesn't know that one either. Try searching something else.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><div class="fallback">🦥</div></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Online</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">Click any term and I'll explain it in my OWN special way. You're welcome. 📖🦥</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid..." />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle"><span class="fallback-face">🦥</span></button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+const GLOSSARY = [
+  { term: 'DRS', cat: 'tech', def: 'Drag Reduction System — a movable rear wing flap that reduces drag on a straight, allowing the chasing car to go faster and attempt an overtake. Only usable within 1 second of the car ahead.', sid: "It's like when I slide down a glacier — someone opens a flap on my back and suddenly I'm FLYING. Except in F1 it's way more aerodynamic. YEAHHH BUDDY! 🦥" },
+  { term: 'Undercut', cat: 'strategy', def: 'A pit stop strategy where you pit BEFORE the car ahead, put on fresh tyres, and use the pace advantage to come out ahead of them.', sid: "The undercut is like sneaking around a mammoth instead of fighting it head on. You pit early, go ZOOM on fresh tyres, and suddenly you're P1. Sneaky but LEGAL! 🦥" },
+  { term: 'Overcut', cat: 'strategy', def: 'The opposite of undercut — you STAY out longer than the car ahead, letting them pit first, while you extend your stint and try to emerge ahead when you eventually pit.', sid: "The overcut is like pretending you don't need a snack break when everyone else does. You stay out, build a gap, and when you finally pit — BOOM you're ahead. Very brave. Very risky. Very Sid. 🦥" },
+  { term: 'Parc Fermé', cat: 'rules', def: 'French for "enclosed park" — a controlled area where cars are held after qualifying. Teams cannot make significant changes to the car setup between qualifying and the race.', sid: "Parc fermé is like when Diego put me in time-out in the ice age. You can't change ANYTHING. You just sit there with your car and think about what you've done. 🦥🇫🇷" },
+  { term: 'Pitstop', cat: 'race', def: 'When a car stops in the pit lane for tyre changes, repairs, or adjustments. F1 pitstops happen in under 3 seconds with a crew of up to 18 people.', sid: "18 people change 4 tyres in under 3 seconds. I watched this happen once and I nearly fainted. I once spent 3 minutes trying to open a coconut. Different energy. 🦥" },
+  { term: 'Safety Car', cat: 'race', def: 'A road car deployed on track to slow the field when there is an incident. Cars cannot overtake and must stay in formation behind it.', sid: "The Safety Car is like that one slow mammoth that walks in front of the whole herd and nobody can pass. Everyone gets frustrated. The race director loves it. I have opinions. 🦥" },
+  { term: 'Virtual Safety Car', cat: 'race', def: 'A slower-speed safety period controlled electronically — drivers must maintain a minimum lap time delta without a physical safety car deployed.', sid: "The VSC is like an invisible mammoth. You can't see it but you still have to slow down. The engineers invented it because real safety cars were too exciting apparently. 🦥" },
+  { term: 'Dirty Air', cat: 'tech', def: 'Turbulent airflow behind a car that reduces downforce for the following car, making it harder to corner and follow closely.', sid: "Dirty air is like running behind a mammoth in a sandstorm. Everything is flying at you, your grip is gone, and you're just SUFFERING. Engineers hate it. Fans love the chaos. 🦥" },
+  { term: 'Downforce', cat: 'tech', def: 'Aerodynamic force pushing the car INTO the ground, giving it grip in corners. More downforce = more grip but more drag. Less downforce = more top speed but less cornering grip.', sid: "Downforce is basically me sitting on the car to keep it on the ground. Except engineers do it with wings and floor designs. My way is cheaper. 🦥" },
+  { term: 'Tifosi', cat: 'race', def: 'The passionate Italian fans of Ferrari — one of the most dedicated fanbases in all of motorsport. They fill Monza in red and create an electric atmosphere.', sid: "The Tifosi are the most passionate humans I have ever encountered. They will WEEP, SCREAM, and celebrate like it's the end of the ice age. I respect them deeply. FORZA FERRARI (sometimes)! 🦥" },
+  { term: 'Quali', cat: 'race', def: 'Short for qualifying — the session where drivers set their fastest lap times to determine grid positions for the race. Split into Q1, Q2, and Q3.', sid: "Quali is basically the world's most expensive time trial. Everyone goes FAST, the slowest ones go home early, and Q3 is ELECTRIC. I watch it standing up. That's saying something for a sloth. 🦥" },
+  { term: 'Graining', cat: 'tech', def: 'When small pieces of rubber build up on a tyre surface, reducing grip. Usually happens when tyres are pushed too hard before they reach operating temperature.', sid: "Graining is when the tyre basically revolts against the driver. Little rubber bits go everywhere, grip disappears, and the driver has to nurse it back. Like my fur in summer. Terrible feeling. 🦥" },
+  { term: 'Blistering', cat: 'tech', def: 'When tyres overheat and chunks of rubber separate from the surface, leaving large bubbles or holes in the tyre. Usually from too much heat build-up.', sid: "Blistering is WORSE than graining. The tyre is basically self-destructing. I once sat near a volcano in the ice age. Same vibe. Very bad. Very hot. Don't recommend. 🦥" },
+  { term: 'Flat Spot', cat: 'race', def: 'When a driver locks their brakes and the tyre slides without rotating, wearing a flat patch on one section of the tyre that causes intense vibration.', sid: "A flat spot means the tyre stopped spinning while the car kept going. It's like if I slid on ice on one foot. Everything vibrates, the driver feels it in their teeth, and the pit crew is NOT happy. 🦥" },
+  { term: 'Marbles', cat: 'race', def: 'Small pieces of rubber that roll off the racing line during a race, collecting on the edges of the track. Driving on marbles is very slippery and dangerous.', sid: "Marbles are tiny rubber pieces off the racing line. They look harmless. They are NOT. I tried walking through the paddock after a race once. Nearly went horizontal. More dangerous than a saber-tooth tiger. 🦥" },
+  { term: 'Traction', cat: 'tech', def: 'The grip between the tyres and the track, especially when accelerating out of corners. Poor traction leads to wheelspin.', sid: "Traction is grip. Without it, the wheels spin uselessly like me trying to run up an ice hill. Maximum traction = maximum go-fast. Simple! That's the Sid guarantee! 🦥" },
+  { term: 'Wheelspin', cat: 'tech', def: 'When the driven wheels spin faster than the car is moving, usually due to too much power applied with insufficient grip. Results in lost time and tyre wear.', sid: "Wheelspin is when your tyres scream 'I CAN\'T COPE' and just... give up momentarily. I do this metaphorically every time I try to make a decision quickly. 🦥" },
+  { term: 'Lock-up', cat: 'race', def: 'When a driver brakes so hard the wheels stop rotating and the car slides forward on locked tyres, usually accompanied by a puff of smoke.', sid: "Lock-up! The tyre just goes NOPE, stops spinning, and you get that beautiful puff of smoke. Very dramatic. Very bad for the tyre. Fans love it. Pirelli does not. 🦥" },
+  { term: 'Formation Lap', cat: 'race', def: 'The lap before the race start where all cars go around the track to warm up their tyres and brakes before lining up on the grid.', sid: "The formation lap is the world's most expensive parade lap. Everyone weaves to warm tyres. Then they line up. Then 5 red lights. Then CHAOS. I love it so much. 🦥" },
+  { term: 'Pit Wall', cat: 'race', def: 'The area in the pitlane where team principals and senior engineers monitor the race and communicate with drivers via radio.', sid: "The pit wall is where the strategists live. They have screens, headsets, and the power to ruin a race with one bad call. Like telling a driver to 'stay out' when they clearly shouldn't. Ferrari knows what I mean. 🦥" },
+  { term: 'Ballast', cat: 'tech', def: 'Heavy weights added to the car to reach the minimum weight limit. Teams strategically place ballast to optimise the car\'s weight distribution.', sid: "Ballast is extra weight teams add to the car on purpose. The OPPOSITE of what I do — I would never voluntarily carry extra weight. Unless it's food. Then yes. 🦥" },
+  { term: 'Rake Angle', cat: 'tech', def: 'The angle of the car\'s floor — higher at the rear, lower at the front. Different teams use different rake philosophies to generate downforce.', sid: "Rake is basically how much the car tilts nose-down. Some teams liked high rake (Red Bull). Some liked low rake (Mercedes). They argued about this for YEARS. Aerodynamics is wild. 🦥" },
+  { term: 'Podium', cat: 'race', def: 'The top three finishers in a race. They stand on a raised platform (podium) to receive trophies and champagne spray. P1 gets the highest spot.', sid: "The podium! P1, P2, P3 stand up there and spray champagne everywhere. It looks amazing. I tried to get on the podium once. Security did not appreciate this. 🦥🏆" },
+  { term: 'DNF', cat: 'race', def: 'Did Not Finish — when a car retires from the race due to mechanical failure, an accident, or other issues. A devastating result for teams and drivers.', sid: "DNF = Did Not Finish. The three saddest letters in F1. Almost as sad as when my friends left me behind in the ice age. Almost. At least in F1 nobody froze. 🦥💔" },
+  { term: 'Fastest Lap', cat: 'race', def: 'The single quickest lap set by any driver during the race. Since 2019, the driver who sets the fastest lap (if in top 10) earns a bonus championship point.', sid: "One extra point for going fast ONE lap. Teams will pit their driver at the end of the race JUST for this. One point! I would definitely risk my life for one extra point. YEAHHH BUDDY! 🦥⚡" },
+  { term: 'Slipstream', cat: 'race', def: 'The area of reduced air resistance directly behind a fast-moving car. Following in another car\'s slipstream allows higher top speeds on straights.', sid: "Slipstream is the F1 version of drafting behind a big mammoth. Less air resistance, more speed. I used to do this with Diego. He was not always happy about it. 🦥" },
+  { term: 'Grid Penalty', cat: 'rules', def: 'A punishment that drops a driver back positions on the starting grid, usually for engine component changes beyond the allowance, causing incidents, or impeding other drivers.', sid: "Grid penalties are F1\'s way of saying 'bad boy, go to the back.' Teams take them strategically sometimes — change the engine in Belgium, start at the back, and... still podium. Modern F1 is confusing. 🦥" },
+];
+
+let activeCategory = 'all';
+let searchTerm = '';
+
+function filterCategory(cat) {
+  activeCategory = cat;
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['all','race','tech','strategy','rules'][i] === cat);
+  });
+  renderGlossary();
+}
+
+function filterTerms(val) {
+  searchTerm = val.toLowerCase();
+  renderGlossary();
+}
+
+function renderGlossary() {
+  const filtered = GLOSSARY.filter(g => {
+    const catMatch = activeCategory === 'all' || g.cat === activeCategory;
+    const searchMatch = !searchTerm || g.term.toLowerCase().includes(searchTerm) || g.def.toLowerCase().includes(searchTerm);
+    return catMatch && searchMatch;
+  });
+
+  const grid = document.getElementById('glossaryGrid');
+  const noRes = document.getElementById('noResults');
+
+  if (!filtered.length) {
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  grid.innerHTML = filtered.map((g, i) => {
+    const catColors = { race: 'var(--red)', tech: 'var(--blue)', strategy: 'var(--green)', rules: 'var(--gold)' };
+    return `
+      <div class="gloss-card fade-in" style="animation-delay:${i*0.04}s" onclick="toggleGloss(this, '${g.term}', \`${g.def.replace(/`/g,'\\`')}\`)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+          <div class="gloss-term">${g.term}</div>
+          <span class="badge" style="background:${catColors[g.cat]}20;color:${catColors[g.cat]}">${g.cat}</span>
+        </div>
+        <div class="gloss-def">${g.def}</div>
+        <div class="gloss-sid" data-sid="${g.sid.replace(/"/g,'&quot;')}">
+          <div style="display:flex;gap:0.5rem;">
+            <span style="flex-shrink:0;">🦥</span>
+            <em>${g.sid}</em>
+          </div>
+        </div>
+        <div style="margin-top:0.75rem;font-size:0.72rem;color:var(--red);font-weight:700;">Click for Sid's take ↓</div>
+      </div>`;
+  }).join('');
+}
+
+const loadingTerms = new Set();
+
+async function toggleGloss(card, term, definition) {
+  card.classList.toggle('expanded');
+  const sidEl = card.querySelector('.gloss-sid');
+  const hint = card.querySelector('[style*="Click for Sid"]');
+
+  if (card.classList.contains('expanded')) {
+    if (hint) hint.style.display = 'none';
+    // If we already have the static quote, show it; otherwise fetch from API
+    if (!sidEl.dataset.loaded) {
+      sidEl.dataset.loaded = 'true';
+      const staticQuote = sidEl.dataset.sid;
+      if (staticQuote && staticQuote !== 'undefined') {
+        sidEl.innerHTML = `<div style="display:flex;gap:0.5rem;"><span style="flex-shrink:0;">🦥</span><em>${staticQuote}</em></div>`;
+      } else {
+        sidEl.innerHTML = '<div style="color:var(--text-dim);font-size:0.82rem;">Loading Sid\'s take...</div>';
+        const data = await API.getGlossaryExplain(term, definition);
+        sidEl.innerHTML = data?.explanation
+          ? `<div style="display:flex;gap:0.5rem;"><span style="flex-shrink:0;">🦥</span><em>${data.explanation}</em></div>`
+          : '<div style="color:var(--text-dim);">Sid is thinking... slowly.</div>';
+      }
+    }
+  } else {
+    if (hint) hint.style.display = '';
+  }
+}
+
+renderGlossary();
+</script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silly Season — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html" class="active">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div style="background:linear-gradient(135deg,rgba(232,0,45,0.12),transparent 60%),var(--bg2);border-bottom:1px solid var(--border);padding:3rem 2rem;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="section-tag">Driver Market</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">🔥 Silly Season 2026</h1>
+      <p style="color:var(--text-dim);max-width:520px;">The 2026 grid is set — new engines, new rules, Audi arrives, and Hamilton in red. Sid has thoughts.</p>
+      <div style="margin-top:1rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <span class="badge badge-green">✅ Confirmed</span>
+        <span class="badge badge-gold">📡 Rumour</span>
+        <span class="badge badge-red">❌ Denied</span>
+        <span class="badge badge-gray">🔒 Under Contract</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="max-width:1100px;">
+
+    <!-- Sid banner -->
+    <div class="card" style="margin-bottom:2rem;border-left:4px solid var(--red);background:rgba(232,0,45,0.05);">
+      <div style="display:flex;gap:1rem;align-items:flex-start;">
+        <div style="font-size:2rem;flex-shrink:0;">🦥</div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;">Sid's 2026 Season Verdict</div>
+          <div style="font-size:0.95rem;line-height:1.6;">
+            "2026 changes EVERYTHING. New power units, new aero rules, and Lewis Hamilton in a Ferrari. I have not recovered from that last one. Also Audi is finally here. I feel like the ice age just ended and a whole new era began. Which is something I have personal experience with. That's the Sid guarantee."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs" style="margin-bottom:2rem;" id="filterTabs">
+      <button class="tab active" onclick="filterRumors('all')">All News</button>
+      <button class="tab" onclick="filterRumors('confirmed')">Confirmed</button>
+      <button class="tab" onclick="filterRumors('rumour')">Rumours</button>
+      <button class="tab" onclick="filterRumors('contracts')">Contracts</button>
+    </div>
+
+    <div id="rumorsGrid" style="display:flex;flex-direction:column;gap:1rem;"></div>
+
+    <!-- 2026 Seat Tracker -->
+    <div style="margin-top:3rem;">
+      <div class="section-tag" style="margin-bottom:1rem;">2026 Driver Lineup</div>
+      <div class="grid-2" style="gap:1rem;" id="seatTracker"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><div class="fallback">🦥</div></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">On rumour patrol</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">The 2026 grid has me SO excited. New rules, new cars, Lewis in red. Ask me anything! 🦥🔥</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid..." />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle"><span class="fallback-face">🦥</span></button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+const RUMORS = [
+  {
+    type: 'confirmed', date: '2025-12-01',
+    headline: 'Lewis Hamilton drives for Scuderia Ferrari — 2026 season underway',
+    detail: 'The most seismic transfer in F1 history. Seven-time World Champion Lewis Hamilton left Mercedes after 12 seasons and 6 championships to race in red. The partnership is now racing.',
+    drivers: ['Lewis Hamilton'], teams: ['Ferrari', 'Mercedes'],
+    sid: "I still haven't fully processed this. Lewis. In RED. Driving past Maranello every morning. The Tifosi lost their minds. I lost my mind. We all lost our minds together. Beautiful chaos.",
+    impact: '🔴 Era-defining'
+  },
+  {
+    type: 'confirmed', date: '2026-01-15',
+    headline: 'Audi officially enters F1 as works team with Kick Sauber rebrand',
+    detail: 'After years of build-up, Audi is a Formula 1 constructor. The team, now running under the Audi banner, brings German engineering ambition to the sport under the new 2026 power unit regulations.',
+    drivers: ['Nico Hülkenberg', 'Gabriel Bortoleto'], teams: ['Audi'],
+    sid: "AUDI IN F1. Four rings. This is like when the dinosaurs arrived in the ice age — except these ones are fast and have a very large marketing budget. Welcome, neighbours.",
+    impact: '🔵 New era'
+  },
+  {
+    type: 'confirmed', date: '2025-11-20',
+    headline: 'Kimi Antonelli makes full-time debut at Mercedes alongside Russell',
+    detail: 'Teenage prodigy Andrea Kimi Antonelli replaced Hamilton at Mercedes at just 18. The Italian-German pairing of Russell and Antonelli represents a bold new direction for the Silver Arrows.',
+    drivers: ['Kimi Antonelli', 'George Russell'], teams: ['Mercedes'],
+    sid: "An 18-year-old in a Mercedes. When I was 18 I was still learning how to operate as a biped. This kid is a different species entirely. In a good way. Respect, tiny fast person.",
+    impact: '🔵 Next gen arrives'
+  },
+  {
+    type: 'confirmed', date: '2025-10-01',
+    headline: 'Carlos Sainz leads Williams Racing revival in 2026',
+    detail: 'After losing his Ferrari seat to Hamilton, Sainz committed to Williams on a multi-year deal, bringing serious championship experience to one of F1\'s most historic teams.',
+    drivers: ['Carlos Sainz'], teams: ['Williams'],
+    sid: "Carlos to Williams was the surprise of the whole silly season. He could have gone many places. He chose the team with the most history and the biggest upside. That\'s either very bold or very smart. Possibly both.",
+    impact: '🟠 Big ambition'
+  },
+  {
+    type: 'confirmed', date: '2025-09-15',
+    headline: 'Max Verstappen signs long-term Red Bull extension',
+    detail: 'Four-time world champion Max Verstappen committed to Red Bull Racing with a contract extension through 2028, ending all speculation about moves to Mercedes or elsewhere.',
+    drivers: ['Max Verstappen'], teams: ['Red Bull Racing'],
+    sid: "Max stays. Of course Max stays. The man has four championships, a fast car, and absolutely zero reason to leave. This was never in doubt. Some of us panicked anyway.",
+    impact: '🟢 Expected but crucial'
+  },
+  {
+    type: 'confirmed', date: '2025-12-10',
+    headline: 'Isack Hadjar promoted to RB F1 Team for 2026',
+    detail: 'Red Bull junior Isack Hadjar earned his full F1 promotion alongside Yuki Tsunoda after impressing in junior categories. The French-Algerian driver is considered one of F1\'s brightest prospects.',
+    drivers: ['Isack Hadjar'], teams: ['RB F1 Team'],
+    sid: "Hadjar time! Another Red Bull junior joins the main event. The Red Bull talent pipeline is genuinely impressive. Like a mammoth herd but for fast drivers.",
+    impact: '🟢 Promotion'
+  },
+  {
+    type: 'confirmed', date: '2025-11-01',
+    headline: 'Oliver Bearman joins Haas F1 full-time alongside Ocon',
+    detail: 'After his impressive substitute appearances in 2024, Oliver Bearman earned a full-time seat at Haas alongside Esteban Ocon. The British youngster showed clear potential in his previous outings.',
+    drivers: ['Oliver Bearman', 'Esteban Ocon'], teams: ['Haas F1 Team'],
+    sid: "Bearman at Haas! He proved himself in those substitute races and now he's got the full seat. That's how you do it. No nonsense. Just fast.",
+    impact: '🟢 Deserved'
+  },
+  {
+    type: 'rumour', date: '2026-05-01',
+    headline: 'Pérez seat under intense scrutiny as Red Bull juniors circle',
+    detail: 'Sergio Pérez continues to face questions about his Red Bull future. Multiple Red Bull-affiliated drivers are reportedly being evaluated as potential replacements if results don\'t improve.',
+    drivers: ['Sergio Pérez'], teams: ['Red Bull Racing'],
+    sid: "Checo has been here before and survived. But the knife is getting closer. Red Bull are RUTHLESS. I have seen mammoths turn on their own. Similar energy.",
+    impact: '🔴 Developing'
+  },
+  {
+    type: 'rumour', date: '2026-04-20',
+    headline: 'Alonso 2027 plans unclear as Aston Martin rebuilds around new regs',
+    detail: 'Fernando Alonso\'s future beyond 2026 is subject to ongoing discussions. At 44, the two-time champion shows no signs of slowing but contract negotiations for 2027 have not been confirmed.',
+    drivers: ['Fernando Alonso'], teams: ['Aston Martin'],
+    sid: "Fernando Alonso retiring?! He will outlast ALL of us. The man raced through three different F1 eras. He\'ll probably still be racing when I\'m a fossil. Don\'t count him out.",
+    impact: '🟡 Watch this space'
+  },
+  {
+    type: 'contracts', date: '2026-01-01',
+    headline: 'Charles Leclerc — Ferrari, contract renewed through 2028',
+    detail: 'Despite Hamilton\'s arrival changing the team dynamic, Leclerc secured a long-term extension. His relationship with the Tifosi and Monaco home-circuit story continues.',
+    drivers: ['Charles Leclerc'], teams: ['Ferrari'],
+    sid: "Charles and Ferrari, committed for the long haul. This is actually the best outcome. Two legends, one team, infinite drama potential. Sid is here for all of it.",
+    impact: '📋 Secured'
+  },
+];
+
+const SEATS_2026 = [
+  { team: 'Red Bull Racing', color: '#3671C6', drivers: [{ name: 'Max Verstappen', flag: '🇳🇱', status: '🔒' }, { name: 'Sergio Pérez', flag: '🇲🇽', status: '⚠️' }] },
+  { team: 'Scuderia Ferrari', color: '#E8002D', drivers: [{ name: 'Lewis Hamilton', flag: '🇬🇧', status: '✅' }, { name: 'Charles Leclerc', flag: '🇲🇨', status: '🔒' }] },
+  { team: 'Mercedes AMG', color: '#27F4D2', drivers: [{ name: 'George Russell', flag: '🇬🇧', status: '🔒' }, { name: 'Kimi Antonelli', flag: '🇮🇹', status: '✅' }] },
+  { team: 'McLaren F1 Team', color: '#FF8000', drivers: [{ name: 'Lando Norris', flag: '🇬🇧', status: '🔒' }, { name: 'Oscar Piastri', flag: '🇦🇺', status: '🔒' }] },
+  { team: 'Aston Martin', color: '#229971', drivers: [{ name: 'Fernando Alonso', flag: '🇪🇸', status: '🔒' }, { name: 'Lance Stroll', flag: '🇨🇦', status: '🔒' }] },
+  { team: 'Alpine F1 Team', color: '#0093CC', drivers: [{ name: 'Pierre Gasly', flag: '🇫🇷', status: '🔒' }, { name: 'Jack Doohan', flag: '🇦🇺', status: '🔒' }] },
+  { team: 'Williams Racing', color: '#64C4FF', drivers: [{ name: 'Carlos Sainz', flag: '🇪🇸', status: '✅' }, { name: 'Alex Albon', flag: '🇹🇭', status: '🔒' }] },
+  { team: 'Haas F1 Team', color: '#B6BABD', drivers: [{ name: 'Esteban Ocon', flag: '🇫🇷', status: '✅' }, { name: 'Oliver Bearman', flag: '🇬🇧', status: '✅' }] },
+  { team: 'RB F1 Team', color: '#6692FF', drivers: [{ name: 'Yuki Tsunoda', flag: '🇯🇵', status: '🔒' }, { name: 'Isack Hadjar', flag: '🇫🇷', status: '✅' }] },
+  { team: 'Audi F1 Team', color: '#C0C0C0', drivers: [{ name: 'Nico Hülkenberg', flag: '🇩🇪', status: '✅' }, { name: 'Gabriel Bortoleto', flag: '🇧🇷', status: '✅' }] },
+];
+
+let activeFilter = 'all';
+
+function filterRumors(type) {
+  activeFilter = type;
+  document.querySelectorAll('#filterTabs .tab').forEach((t, i) => {
+    t.classList.toggle('active', ['all','confirmed','rumour','contracts'][i] === type);
+  });
+  renderRumors();
+}
+
+function renderRumors() {
+  const filtered = activeFilter === 'all' ? RUMORS : RUMORS.filter(r => r.type === activeFilter);
+  const grid = document.getElementById('rumorsGrid');
+  const typeConfig = {
+    confirmed: { label: '✅ Confirmed', cls: 'rumor-confirmed', borderColor: 'var(--green)' },
+    rumour:    { label: '📡 Rumour',    cls: 'rumor-rumor',     borderColor: 'var(--gold)' },
+    denied:    { label: '❌ Denied',    cls: 'rumor-denied',    borderColor: 'var(--red)' },
+    contracts: { label: '📋 Contract',  cls: 'rumor-confirmed', borderColor: 'var(--blue)' },
+  };
+  grid.innerHTML = filtered.map((r, i) => {
+    const cfg = typeConfig[r.type] || typeConfig.rumour;
+    return `
+      <div class="rumor-card fade-in" style="border-left-color:${cfg.borderColor};animation-delay:${i*0.05}s">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+          <div class="rumor-status ${cfg.cls}">${cfg.label}</div>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+            ${r.impact ? `<span class="badge badge-gray" style="font-size:0.68rem;">${r.impact}</span>` : ''}
+            <span style="font-size:0.72rem;color:var(--text-dim);">${r.date}</span>
+          </div>
+        </div>
+        <div class="fw-700" style="font-size:1rem;margin-bottom:0.5rem;">${r.headline}</div>
+        <div style="font-size:0.85rem;color:var(--text-dim);line-height:1.6;margin-bottom:0.75rem;">${r.detail}</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.75rem;">
+          ${(r.drivers||[]).map(d => `<span class="flag-pill">👤 ${d}</span>`).join('')}
+          ${(r.teams||[]).map(t => `<span class="flag-pill" style="border-color:${getTeamColor(t)}40;color:${getTeamColor(t)};">🏎️ ${t}</span>`).join('')}
+        </div>
+        ${r.sid ? `
+          <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;">
+            <span style="flex-shrink:0;font-size:1rem;">🦥</span>
+            <em style="font-size:0.82rem;color:var(--text-dim);">${r.sid}</em>
+          </div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+document.getElementById('seatTracker').innerHTML = SEATS_2026.map(team => `
+  <div class="card" style="border-left:4px solid ${team.color};">
+    <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.75rem;color:${team.color};">${team.name}</div>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+      ${team.drivers.map(d => `
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span>${d.flag}</span>
+          <span style="flex:1;font-size:0.88rem;">${d.name}</span>
+          <span style="font-size:1rem;" title="${d.status==='🔒'?'Contract secured':d.status==='✅'?'New signing':d.status==='⚠️'?'Under pressure':'Negotiating'}">${d.status}</span>
+        </div>`).join('')}
+    </div>
+  </div>`).join('');
+
+renderRumors();
+</script>
+</body>
+</html>

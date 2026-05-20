@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Circuits — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="circuit.html" class="active">Circuits</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div style="background:linear-gradient(135deg,rgba(232,0,45,0.12),transparent 60%),var(--bg2);border-bottom:1px solid var(--border);padding:3rem 2rem;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="section-tag">Circuit DNA</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">🏎️ Every Track Profiled</h1>
+      <p style="color:var(--text-dim);max-width:500px;">Records, weather, past winners, and Sid's very important opinions.</p>
+    </div>
+  </div>
+
+  <!-- Circuit Grid -->
+  <div id="circuitGrid" style="max-width:1200px;margin:0 auto;padding:2rem;">
+    <div class="grid-auto" id="circuitCards"></div>
+  </div>
+
+  <!-- Circuit Detail -->
+  <div id="circuitDetail" style="display:none;max-width:1100px;margin:0 auto;padding:2rem;">
+    <button class="btn btn-ghost" onclick="closeDetail()" style="margin-bottom:1.5rem;">← All Circuits</button>
+
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem;">
+      <div style="font-size:4rem;" id="detailFlag"></div>
+      <div>
+        <div class="section-tag" id="detailCountry"></div>
+        <h2 class="section-title" style="font-size:2rem;" id="detailName"></h2>
+      </div>
+    </div>
+
+    <div class="grid-4" style="gap:1rem;margin-bottom:2rem;" id="detailStats"></div>
+
+    <div class="grid-2" style="gap:1.5rem;margin-bottom:2rem;">
+      <!-- Weather -->
+      <div class="card card-accent" id="detailWeatherCard" style="display:none;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Current Weather at Circuit</div>
+        <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+          <div>
+            <div class="font-mono fw-900 text-red" style="font-size:2.5rem;" id="detailTemp">--°C</div>
+            <div style="font-size:0.8rem;color:var(--text-dim);" id="detailWeatherDesc"></div>
+          </div>
+          <div style="display:flex;gap:1.5rem;">
+            <div><div class="text-dim" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;">Wind</div><div class="font-mono fw-700" id="detailWind">--</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sid's Take -->
+      <div class="card" style="border-left:3px solid var(--red);">
+        <div style="display:flex;gap:0.75rem;">
+          <div style="font-size:1.5rem;flex-shrink:0;">🦥</div>
+          <div>
+            <div style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:0.4rem;">Sid's Take</div>
+            <div style="font-size:0.88rem;font-style:italic;" id="detailSidQuote">Loading Sid's opinion...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fun Fact -->
+    <div class="card" style="margin-bottom:2rem;border-left:3px solid var(--gold);" id="detailFunFact" style="display:none;">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem;">⭐ Fun Fact</div>
+      <div id="detailFunFactText" style="font-size:0.9rem;"></div>
+    </div>
+
+    <!-- Past Winners -->
+    <div class="card">
+      <div class="section-tag" style="margin-bottom:1rem;">Past Race Winners</div>
+      <div id="detailWinners">
+        <div class="loading-state"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><div class="fallback">🦥</div></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Online</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">Monaco is basically my ice cave. Narrow, impossible to escape. Ask me anything! 🦥🏎️</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid..." />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle"><span class="fallback-face">🦥</span></button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+const CIRCUITS_CLIENT = {
+  bahrain:       { name: 'Bahrain International Circuit',   country: 'Bahrain',     flag: '🇧🇭' },
+  saudi_arabia:  { name: 'Jeddah Corniche Circuit',         country: 'Saudi Arabia',flag: '🇸🇦' },
+  australia:     { name: 'Albert Park Circuit',             country: 'Australia',   flag: '🇦🇺' },
+  japan:         { name: 'Suzuka Circuit',                  country: 'Japan',       flag: '🇯🇵' },
+  china:         { name: 'Shanghai International Circuit',  country: 'China',       flag: '🇨🇳' },
+  miami:         { name: 'Miami International Autodrome',   country: 'USA',         flag: '🇺🇸' },
+  monaco:        { name: 'Circuit de Monaco',               country: 'Monaco',      flag: '🇲🇨' },
+  canada:        { name: 'Circuit Gilles Villeneuve',       country: 'Canada',      flag: '🇨🇦' },
+  spain:         { name: 'Circuit de Barcelona-Catalunya',  country: 'Spain',       flag: '🇪🇸' },
+  austria:       { name: 'Red Bull Ring',                   country: 'Austria',     flag: '🇦🇹' },
+  britain:       { name: 'Silverstone Circuit',             country: 'Great Britain',flag:'🇬🇧' },
+  belgium:       { name: 'Circuit de Spa-Francorchamps',    country: 'Belgium',     flag: '🇧🇪' },
+  hungary:       { name: 'Hungaroring',                     country: 'Hungary',     flag: '🇭🇺' },
+  netherlands:   { name: 'Circuit Zandvoort',               country: 'Netherlands', flag: '🇳🇱' },
+  italy:         { name: 'Autodromo Nazionale Monza',       country: 'Italy',       flag: '🇮🇹' },
+  azerbaijan:    { name: 'Baku City Circuit',               country: 'Azerbaijan',  flag: '🇦🇿' },
+  singapore:     { name: 'Marina Bay Street Circuit',       country: 'Singapore',   flag: '🇸🇬' },
+  usa:           { name: 'Circuit of The Americas',         country: 'USA',         flag: '🇺🇸' },
+  mexico:        { name: 'Autódromo Hermanos Rodríguez',    country: 'Mexico',      flag: '🇲🇽' },
+  brazil:        { name: 'Autódromo José Carlos Pace',      country: 'Brazil',      flag: '🇧🇷' },
+  las_vegas:     { name: 'Las Vegas Street Circuit',        country: 'USA',         flag: '🇺🇸' },
+  qatar:         { name: 'Lusail International Circuit',    country: 'Qatar',       flag: '🇶🇦' },
+  abu_dhabi:     { name: 'Yas Marina Circuit',              country: 'UAE',         flag: '🇦🇪' },
+};
+
+// Build grid
+const grid = document.getElementById('circuitCards');
+grid.innerHTML = Object.entries(CIRCUITS_CLIENT).map(([key, c]) => `
+  <div class="card" style="cursor:pointer;" onclick="openCircuit('${key}')">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">${c.flag}</div>
+    <div class="fw-700">${c.name}</div>
+    <div style="font-size:0.75rem;color:var(--text-dim);margin-top:4px;">${c.country}</div>
+    <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--red);font-weight:700;">View Profile →</div>
+  </div>`).join('');
+
+async function openCircuit(key) {
+  document.getElementById('circuitGrid').style.display = 'none';
+  document.getElementById('circuitDetail').style.display = 'block';
+  const c = CIRCUITS_CLIENT[key];
+  if (c) {
+    document.getElementById('detailFlag').textContent = c.flag;
+    document.getElementById('detailName').textContent = c.name;
+    document.getElementById('detailCountry').textContent = c.country;
+  }
+  document.getElementById('detailStats').innerHTML = '<div class="loading-state" style="grid-column:1/-1"><div class="spinner"></div></div>';
+  document.getElementById('detailWinners').innerHTML = '<div class="loading-state"><div class="spinner"></div></div>';
+
+  const data = await API.getCircuitDNA(key);
+  if (!data) return;
+
+  const stats = [
+    { label: 'Circuit Length', value: data.length_km ? data.length_km + ' km' : '—' },
+    { label: 'Turns', value: data.turns || '—' },
+    { label: 'DRS Zones', value: data.drs_zones || '—' },
+    { label: 'First GP', value: data.first_gp || '—' },
+    { label: 'Lap Record', value: data.lap_record || '—', wide: true },
+    { label: 'Overtaking', value: data.overtaking_difficulty || '—', wide: true },
+  ];
+  document.getElementById('detailStats').innerHTML = stats.map(s => `
+    <div class="card" style="padding:1rem;${s.wide?'grid-column:span 2;':''}">
+      <div style="font-size:0.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">${s.label}</div>
+      <div class="fw-700" style="font-size:0.9rem;">${s.value}</div>
+    </div>`).join('');
+
+  if (data.weather?.temperature != null) {
+    const wc = document.getElementById('detailWeatherCard');
+    wc.style.display = 'block';
+    document.getElementById('detailTemp').textContent = `${Math.round(data.weather.temperature)}°C`;
+    document.getElementById('detailWeatherDesc').textContent = descWeather(data.weather.weathercode);
+    document.getElementById('detailWind').textContent = `${data.weather.windspeed} km/h`;
+  }
+
+  if (data.sid_quote) {
+    document.getElementById('detailSidQuote').textContent = data.sid_quote;
+  }
+
+  if (data.fun_fact) {
+    document.getElementById('detailFunFact').style.display = 'block';
+    document.getElementById('detailFunFactText').textContent = data.fun_fact;
+  }
+
+  if (data.past_winners?.length) {
+    document.getElementById('detailWinners').innerHTML = `
+      <table class="standings-table">
+        <thead><tr><th>Year</th><th>Winner</th><th>Constructor</th><th>Time / Gap</th></tr></thead>
+        <tbody>
+          ${data.past_winners.map(w => `
+            <tr>
+              <td class="font-mono text-dim">${w.year}</td>
+              <td class="fw-700">${w.winner}</td>
+              <td style="color:var(--text-dim);font-size:0.85rem;">${w.constructor}</td>
+              <td class="font-mono" style="font-size:0.82rem;color:var(--text-dim);">${w.time || '—'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  } else {
+    document.getElementById('detailWinners').innerHTML = '<div class="text-dim" style="padding:1rem;">No winner data available for this circuit.</div>';
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeDetail() {
+  document.getElementById('circuitDetail').style.display = 'none';
+  document.getElementById('circuitGrid').style.display = 'block';
+}
+
+function descWeather(code) {
+  if (!code && code !== 0) return '';
+  if (code === 0) return 'Clear sky ☀️';
+  if (code <= 3)  return 'Partly cloudy ⛅';
+  if (code <= 9)  return 'Overcast ☁️';
+  if (code <= 39) return 'Foggy 🌫️';
+  if (code <= 69) return 'Rain 🌧️';
+  if (code <= 79) return 'Snow 🌨️';
+  if (code <= 89) return 'Showers 🌦️';
+  return 'Thunderstorm ⛈️';
+}
+</script>
+</body>
+</html>

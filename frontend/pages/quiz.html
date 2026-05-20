@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What F1 Team Are You? — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="quiz.html" class="active">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;min-height:100vh;display:flex;flex-direction:column;">
+  <div style="background:linear-gradient(135deg,rgba(232,0,45,0.12),transparent 60%),var(--bg2);border-bottom:1px solid var(--border);padding:3rem 2rem;">
+    <div style="max-width:700px;margin:0 auto;text-align:center;">
+      <div class="section-tag">Personality Quiz</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">🤔 What F1 Team Are You?</h1>
+      <p style="color:var(--text-dim);">8 questions. Sid decides your fate. No complaining about the result.</p>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 2rem;">
+    <div style="width:100%;max-width:620px;">
+
+      <!-- START SCREEN -->
+      <div id="startScreen" style="text-align:center;">
+        <div style="font-size:5rem;margin-bottom:1.5rem;">🦥</div>
+        <h2 class="font-mono fw-700" style="font-size:1.8rem;margin-bottom:1rem;">Ready to find your team?</h2>
+        <p style="color:var(--text-dim);margin-bottom:2rem;line-height:1.7;">
+          Sid has carefully designed 8 questions to determine which F1 constructor matches your personality.
+          He spent <em>at least</em> 3 minutes on this. Very scientific.
+        </p>
+        <button class="btn btn-primary" style="font-size:1rem;padding:1rem 2rem;" onclick="startQuiz()">
+          🚦 Start Quiz
+        </button>
+      </div>
+
+      <!-- QUIZ SCREEN -->
+      <div id="quizScreen" style="display:none;">
+        <div class="quiz-progress">
+          <div class="quiz-progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:1.5rem;text-align:center;">
+          Question <span id="qNum">1</span> of 8
+        </div>
+        <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:1.5rem;line-height:1.4;" id="questionText"></h2>
+        <div id="optionsContainer" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+      </div>
+
+      <!-- RESULT SCREEN -->
+      <div id="resultScreen" style="display:none;text-align:center;">
+        <div style="font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem;">You are...</div>
+        <div style="font-size:5rem;margin-bottom:0.5rem;" id="resultFlag"></div>
+        <h2 class="font-mono fw-900" style="font-size:2.5rem;margin-bottom:0.5rem;" id="resultTeamName"></h2>
+        <div style="font-size:1rem;color:var(--text-dim);margin-bottom:2rem;" id="resultTeamTagline"></div>
+
+        <div class="card" style="margin-bottom:1.5rem;text-align:left;">
+          <div style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:0.75rem;">Why Sid picked this for you:</div>
+          <div style="font-size:0.95rem;line-height:1.6;" id="resultDescription"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:2rem;text-align:left;border-left:3px solid var(--red);">
+          <div style="display:flex;gap:0.75rem;">
+            <div style="font-size:1.5rem;">🦥</div>
+            <div style="font-size:0.9rem;font-style:italic;" id="resultSidQuote"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="restartQuiz()">🔄 Try Again</button>
+          <button class="btn btn-outline" onclick="shareResult()">📤 Share Result</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><div class="fallback">🦥</div></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Judging you</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">I MADE THIS QUIZ MYSELF. Every question was very carefully thought out. For at least 4 minutes. 🦥</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid..." />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle"><span class="fallback-face">🦥</span></button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+const QUESTIONS = [
+  {
+    q: "Your approach to a big challenge?",
+    options: [
+      { text: "Dominate from the front — I was born to win",        scores: { red_bull: 3, mercedes: 1 } },
+      { text: "Emotional, passionate, sometimes chaotic",           scores: { ferrari: 3, haas: 1 } },
+      { text: "Technical excellence over everything",               scores: { mercedes: 3, rb: 1 } },
+      { text: "Fast upgrades, always improving",                    scores: { mclaren: 3, alpine: 1 } },
+    ]
+  },
+  {
+    q: "How do you handle setbacks?",
+    options: [
+      { text: "Push harder. Setbacks don't exist in my vocabulary", scores: { red_bull: 3, aston_martin: 1 } },
+      { text: "Cry a little, then blame the strategy",              scores: { ferrari: 3, alpine: 1 } },
+      { text: "Analyze the data and rebuild methodically",          scores: { mercedes: 3, kick_sauber: 1 } },
+      { text: "Laugh it off and try again next time",               scores: { williams: 3, haas: 1 } },
+    ]
+  },
+  {
+    q: "Your ideal Saturday night?",
+    options: [
+      { text: "Championship gala in Monaco. Obviously",             scores: { red_bull: 2, aston_martin: 3 } },
+      { text: "Passionate dinner arguing about Schumacher vs Senna", scores: { ferrari: 3, mclaren: 1 } },
+      { text: "Reviewing telemetry data. It's actually fun.",       scores: { mercedes: 3, rb: 2 } },
+      { text: "Something wild and unpredictable",                   scores: { alpine: 3, haas: 2 } },
+    ]
+  },
+  {
+    q: "Pick your racing style:",
+    options: [
+      { text: "Aggressive early, dominate the whole race",          scores: { red_bull: 3, mclaren: 1 } },
+      { text: "Exciting but prone to drama and DNFs",               scores: { ferrari: 3, haas: 2 } },
+      { text: "Consistent, fast, no unnecessary risks",             scores: { mercedes: 3, aston_martin: 2 } },
+      { text: "Underdog fighting up from the back",                 scores: { williams: 3, rb: 2 } },
+    ]
+  },
+  {
+    q: "A teammate beats you in qualifying. You:",
+    options: [
+      { text: "Study their data obsessively and beat them next race", scores: { red_bull: 2, mercedes: 3 } },
+      { text: "Get emotional and have a very public moment",         scores: { ferrari: 3, alpine: 1 } },
+      { text: "Shake their hand. Good result for the team.",         scores: { aston_martin: 3, williams: 2 } },
+      { text: "Say something iconic to the press",                  scores: { mclaren: 3, rb: 1 } },
+    ]
+  },
+  {
+    q: "What does F1 mean to you?",
+    options: [
+      { text: "Pure raw performance. The pinnacle of motorsport",    scores: { red_bull: 2, mercedes: 2, mclaren: 2 } },
+      { text: "Passion, history, and the Tifosi",                   scores: { ferrari: 3 } },
+      { text: "Engineering art meets human skill",                  scores: { aston_martin: 3, rb: 1 } },
+      { text: "The greatest show on Earth — especially the drama",  scores: { haas: 2, alpine: 2, williams: 2 } },
+    ]
+  },
+  {
+    q: "Your spending philosophy?",
+    options: [
+      { text: "Spend whatever it takes to win. Money is no object", scores: { red_bull: 3, aston_martin: 3 } },
+      { text: "Rich history, but always funding drama somehow",     scores: { ferrari: 3 } },
+      { text: "Smart investment, extract maximum value",            scores: { mercedes: 3, mclaren: 2 } },
+      { text: "Bootstrap budget, giant heart",                      scores: { williams: 3, haas: 3 } },
+    ]
+  },
+  {
+    q: "Sid asks: what's your sloth power level?",
+    options: [
+      { text: "I am the anti-sloth. I am speed itself",             scores: { red_bull: 3 } },
+      { text: "I'm fast but I trip over my own feet sometimes",     scores: { ferrari: 3 } },
+      { text: "Slow but calculated. Like a sloth with a PhD",       scores: { mercedes: 2, kick_sauber: 3 } },
+      { text: "I AM SID. This is my team.",                         scores: { mclaren: 2, williams: 2, alpine: 2 } },
+    ]
+  },
+];
+
+const TEAMS = {
+  red_bull:    { name: 'Red Bull Racing', flag: '🇦🇹', color: '#3671C6', tagline: 'Dominant. Clinical. Unstoppable.', description: 'You are a natural winner. You set the standard, you raise the bar, and you make it look effortless. People either love you or desperately want to beat you. There is no in-between. You probably have very strong opinions about aero regulations.', sidQuote: "RED BULL GIVES YOU WINGS! And also multiple world championships. You're basically Max. I mean that as a compliment! YEAHHH BUDDY! 🦥" },
+  ferrari:     { name: 'Scuderia Ferrari', flag: '🇮🇹', color: '#E8002D', tagline: 'Passionate. Dramatic. Iconic.', description: 'You live and breathe passion. You are capable of brilliance but occasionally make decisions that leave everyone screaming at the TV. The drama is part of the charm. The Tifosi would die for you. Strategy is... a work in progress.', sidQuote: "Ferrari! The most dramatic team in F1! You and I are the same — full of passion, occasionally confused, but always entertaining! That's the Sid guarantee! 🦥" },
+  mercedes:    { name: 'Mercedes AMG', flag: '🇩🇪', color: '#27F4D2', tagline: 'Methodical. Dominant. Precise.', description: 'You are the ultimate engineer. You analyse everything, leave nothing to chance, and when you find your groove, you are near impossible to beat. You might come across as a bit serious but the results speak for themselves. 8 constructors titles speaks for itself.', sidQuote: "Mercedes! THE most successful team of the hybrid era! You're smart, technical, and probably correct about everything. Unlike me. I respect that! YEAHHH BUDDY! 🦥" },
+  mclaren:     { name: 'McLaren F1 Team', flag: '🇬🇧', color: '#FF8000', tagline: 'Fast. Orange. Rising.', description: 'You were great, went through a rough patch, but came back STRONGER. You adapt fast, you have style, and your comeback arc is genuinely exciting. You are the paperaya of people — bright, unmistakable, and always showing up.', sidQuote: "McLaren! PAPAYA POWER! You had some tough years but look at you now! Like me surviving the ice age — rough times, great comeback. I LOVE this energy! 🦥" },
+  aston_martin:{ name: 'Aston Martin', flag: '🇬🇧', color: '#229971', tagline: 'Sophisticated. Ambitious. Green.', description: 'You have serious money, serious ambition, and serious style. You want to win but you are doing it with class. The British Racing Green looks incredible on you. You brought Alonso and meant business.', sidQuote: "Aston Martin! Very classy! Very green! You know what else is green? My favourite salad. Anyway, you're fancy and I like it! That's the Sid guarantee! 🦥" },
+  alpine:      { name: 'Alpine F1 Team', flag: '🇫🇷', color: '#0093CC', tagline: 'Chaotic. French. Unpredictable.', description: 'You are unpredictable in the best possible way. One weekend you are fighting for podiums, the next you are having internal team drama that would fill a Netflix series. Very entertaining, very French, very you.', sidQuote: "Alpine! Très dramatic! You know, I once got into an argument with a mammoth that reminded me a lot of Alpine's driver announcements. C'est la vie! 🦥🇫🇷" },
+  williams:    { name: 'Williams Racing', flag: '🇬🇧', color: '#64C4FF', tagline: 'Historic. Resilient. Beloved.', description: 'You are a legend with history and heart. You have been through tough times but you never give up, and everyone is rooting for you. The F1 community loves you. Your comeback story is still being written and it is going to be great.', sidQuote: "Williams! THE most beloved underdog in F1! Seven constructors championships in history! You and I both know what it's like to not always be on top but KEEP GOING! That's the Sid way! 🦥" },
+  haas:        { name: 'Haas F1 Team', flag: '🇺🇸', color: '#B6BABD', tagline: 'Chaotic. American. Entertaining.', description: 'You are the most entertaining person in any room. Things happen around you that defy explanation. You bring American energy to a European sport. You might not always finish where you hoped, but the journey is WILD. Steiner would be proud.', sidQuote: "HAAS! America enters the chat! Things go sideways, then sideways again, but it's never boring! You are my spirit animal! Well, I'm a sloth, but you get it. GUENTHER VIBES! 🦥🇺🇸" },
+  rb:          { name: 'RB F1 Team', flag: '🇮🇹', color: '#6692FF', tagline: 'Talented. Overlooked. Underrated.', description: 'You are quietly talented and massively underrated. You do solid work, you develop future champions, and people only notice you when you outperform expectations. Your time is coming and you know it.', sidQuote: "RB! The team that gave us Vettel, Verstappen, Ricciardo! You're the farm system of F1 greatness. Underrated? YES. But Sid sees you! YEAHHH BUDDY! 🦥" },
+  kick_sauber: { name: 'Kick Sauber', flag: '🇨🇭', color: '#52E252', tagline: 'Swiss. Technical. Transitioning.', description: 'You are technically gifted, quietly methodical, and currently in a fascinating transition. You have the potential for greatness and you are building toward something big. Swiss precision meets motorsport ambition.', sidQuote: "Kick Sauber! The most Swiss team in F1! You know, Switzerland gave us cheese and chocolate. This team will give us something great soon. I believe it! That's the Sid guarantee! 🦥" },
+};
+
+const scores = {};
+let currentQ = 0;
+
+function startQuiz() {
+  Object.keys(TEAMS).forEach(k => scores[k] = 0);
+  currentQ = 0;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('progressFill').style.width = `${(currentQ / 8) * 100}%`;
+  document.getElementById('questionText').textContent = q.q;
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option fade-in';
+    btn.style.animationDelay = `${i * 0.07}s`;
+    btn.textContent = opt.text;
+    btn.onclick = () => selectOption(opt.scores, btn);
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(optScores, btn) {
+  document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  Object.entries(optScores).forEach(([team, pts]) => { scores[team] = (scores[team] || 0) + pts; });
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ >= QUESTIONS.length) showResult();
+    else showQuestion();
+  }, 350);
+}
+
+function showResult() {
+  const winner = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const team = TEAMS[winner];
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('resultFlag').textContent = team.flag;
+  document.getElementById('resultTeamName').style.color = team.color;
+  document.getElementById('resultTeamName').textContent = team.name;
+  document.getElementById('resultTeamTagline').textContent = team.tagline;
+  document.getElementById('resultDescription').textContent = team.description;
+  document.getElementById('resultSidQuote').textContent = team.sidQuote;
+  document.getElementById('resultScreen').classList.add('fade-in');
+}
+
+function restartQuiz() {
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+}
+
+function shareResult() {
+  const team = document.getElementById('resultTeamName').textContent;
+  const text = `I'm ${team} according to Sid's F1 Personality Quiz on Sid's F1 Hub! 🦥🏎️`;
+  if (navigator.share) {
+    navigator.share({ title: "My F1 Team", text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('Result copied to clipboard!'));
+  }
+}
+</script>
+</body>
+</html>

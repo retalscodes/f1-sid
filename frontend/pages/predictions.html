@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predictions — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">
+    <div class="sid-icon-fallback">🦥</div>
+    SID'S F1 HUB
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html" class="active">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div style="background:linear-gradient(135deg,rgba(232,0,45,0.15),transparent 60%),var(--bg2);border-bottom:1px solid var(--border);padding:3rem 2rem;">
+    <div style="max-width:900px;margin:0 auto;">
+      <div class="section-tag">Race Predictions</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">🎯 Predict With Friends</h1>
+      <p style="color:var(--text-dim);font-size:1rem;max-width:500px;">
+        Create a room, share the code, everyone submits their podium picks before lights out — then see who Sid would hire as a strategist.
+      </p>
+    </div>
+  </div>
+
+  <div class="section" style="max-width:900px;">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('create')">Create Room</button>
+      <button class="tab" onclick="showTab('join')">Join Room</button>
+      <button class="tab" onclick="showTab('view')">View Leaderboard</button>
+      <button class="tab" onclick="showTab('score')">Score Results</button>
+    </div>
+
+    <!-- CREATE -->
+    <div id="tab-create">
+      <div class="card card-accent" style="max-width:480px;">
+        <h3 class="font-mono fw-700" style="margin-bottom:1.5rem;">Create a Prediction Room</h3>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Race Name</label>
+            <input class="input" id="createRaceName" placeholder="e.g. Canadian Grand Prix 2026" />
+          </div>
+          <div class="grid-2" style="gap:1rem;">
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Round #</label>
+              <input class="input" id="createRound" type="number" min="1" max="24" placeholder="8" />
+            </div>
+            <div>
+              <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Season</label>
+              <input class="input" id="createSeason" type="number" value="2026" />
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="createRoom()" style="align-self:flex-start;">
+            🚦 Create Room
+          </button>
+        </div>
+      </div>
+
+      <div id="createResult" style="display:none;margin-top:2rem;" class="card card-accent">
+        <div class="section-tag">Room Created!</div>
+        <div style="margin-top:0.5rem;margin-bottom:1rem;">Share this code with your friends:</div>
+        <div class="room-code" id="newRoomCode"></div>
+        <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+          <button class="btn btn-outline" onclick="copyCode()">📋 Copy Code</button>
+          <button class="btn btn-ghost" onclick="goToRoom()">View Room →</button>
+        </div>
+        <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim);">
+          🦥 Sid says: "Tell EVERYONE. Even mammoths."
+        </div>
+      </div>
+    </div>
+
+    <!-- JOIN -->
+    <div id="tab-join" style="display:none;">
+      <div class="card card-accent" style="max-width:480px;">
+        <h3 class="font-mono fw-700" style="margin-bottom:1.5rem;">Join a Room & Submit Prediction</h3>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Room Code</label>
+            <input class="input" id="joinCode" placeholder="e.g. ABC123" style="text-transform:uppercase;font-family:var(--font-mono);font-size:1.1rem;letter-spacing:3px;" maxlength="6" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Your Name</label>
+            <input class="input" id="joinName" placeholder="e.g. Sid" />
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;">
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Your Podium Predictions</div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--gold);font-family:var(--font-mono);font-weight:900;min-width:32px;">P1</span>
+                <input class="input" id="joinP1" placeholder="Driver surname (e.g. Verstappen)" />
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--silver);font-family:var(--font-mono);font-weight:900;min-width:32px;">P2</span>
+                <input class="input" id="joinP2" placeholder="Driver surname" />
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--bronze);font-family:var(--font-mono);font-weight:900;min-width:32px;">P3</span>
+                <input class="input" id="joinP3" placeholder="Driver surname" />
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--green);font-family:var(--font-mono);font-weight:900;min-width:32px;">FL</span>
+                <input class="input" id="joinFL" placeholder="Fastest Lap (optional)" />
+              </div>
+            </div>
+          </div>
+          <div style="background:rgba(232,0,45,0.08);border:1px solid rgba(232,0,45,0.2);border-radius:var(--radius);padding:1rem;font-size:0.82rem;color:var(--text-dim);">
+            <strong style="color:var(--red);">Scoring:</strong> P1 exact = 25pts · P2 exact = 18pts · P3 exact = 15pts · On podium wrong spot = 6pts · Fastest Lap = 10pts
+          </div>
+          <button class="btn btn-primary" onclick="submitPrediction()" style="align-self:flex-start;">
+            🏎️ Lock In Predictions
+          </button>
+        </div>
+      </div>
+      <div id="joinResult" style="display:none;margin-top:1.5rem;" class="card">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">✅</div>
+        <div class="font-mono fw-700" id="joinResultMsg">Prediction submitted!</div>
+        <div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.5rem;">Check the leaderboard after the race.</div>
+      </div>
+    </div>
+
+    <!-- VIEW LEADERBOARD -->
+    <div id="tab-view" style="display:none;">
+      <div class="card" style="max-width:480px;margin-bottom:2rem;">
+        <div style="display:flex;gap:1rem;align-items:flex-end;">
+          <div style="flex:1;">
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Room Code</label>
+            <input class="input" id="viewCode" placeholder="Enter room code" style="text-transform:uppercase;font-family:var(--font-mono);font-size:1.1rem;letter-spacing:3px;" maxlength="6" />
+          </div>
+          <button class="btn btn-primary" onclick="loadRoom()">View</button>
+        </div>
+      </div>
+      <div id="roomView" style="display:none;">
+        <div style="margin-bottom:1.5rem;">
+          <div class="section-tag" id="roomRaceName"></div>
+          <div style="display:flex;align-items:center;gap:1rem;margin-top:0.5rem;">
+            <div class="room-code" style="font-size:1.5rem;" id="roomCodeDisplay"></div>
+            <span id="roomLockBadge"></span>
+          </div>
+        </div>
+        <div id="roomPredictions"></div>
+      </div>
+    </div>
+
+    <!-- SCORE -->
+    <div id="tab-score" style="display:none;">
+      <div class="card card-accent" style="max-width:480px;">
+        <h3 class="font-mono fw-700" style="margin-bottom:1.5rem;">Score a Room After the Race</h3>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Room Code</label>
+            <input class="input" id="scoreCode" placeholder="Room code" style="text-transform:uppercase;font-family:var(--font-mono);font-size:1.1rem;letter-spacing:3px;" maxlength="6" />
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;">
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Actual Race Result</div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--gold);font-family:var(--font-mono);font-weight:900;min-width:32px;">P1</span>
+                <input class="input" id="actualP1" placeholder="Winner surname" />
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--silver);font-family:var(--font-mono);font-weight:900;min-width:32px;">P2</span>
+                <input class="input" id="actualP2" placeholder="P2 surname" />
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--bronze);font-family:var(--font-mono);font-weight:900;min-width:32px;">P3</span>
+                <input class="input" id="actualP3" placeholder="P3 surname" />
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="color:var(--green);font-family:var(--font-mono);font-weight:900;min-width:32px;">FL</span>
+                <input class="input" id="actualFL" placeholder="Fastest lap driver" />
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="scoreRoom()">🏆 Calculate Scores</button>
+        </div>
+      </div>
+      <div id="scoreResult" style="display:none;margin-top:2rem;">
+        <div class="section-tag">Final Leaderboard</div>
+        <div id="finalLeaderboard" style="margin-top:1rem;display:flex;flex-direction:column;gap:0.75rem;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><div class="fallback">🦥</div></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Online</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">I predicted WRONG last race too, so we're in this together buddy! 🦥</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid..." />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle">
+    <span class="fallback-face">🦥</span>
+  </button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+let _newRoomCode = '';
+
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+document.getElementById('joinCode').addEventListener('input', e => {
+  e.target.value = e.target.value.toUpperCase();
+});
+document.getElementById('viewCode').addEventListener('input', e => {
+  e.target.value = e.target.value.toUpperCase();
+});
+document.getElementById('scoreCode').addEventListener('input', e => {
+  e.target.value = e.target.value.toUpperCase();
+});
+
+function showTab(name) {
+  ['create','join','view','score'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((btn, i) => {
+    btn.classList.toggle('active', ['create','join','view','score'][i] === name);
+  });
+}
+
+async function createRoom() {
+  const raceName   = document.getElementById('createRaceName').value.trim();
+  const raceRound  = parseInt(document.getElementById('createRound').value);
+  const season     = parseInt(document.getElementById('createSeason').value);
+  if (!raceName || !raceRound || !season) return alert('Please fill in all fields.');
+  const data = await API.createRoom({ race_name: raceName, race_round: raceRound, season });
+  if (!data?.code) return alert('Error creating room. Try again.');
+  _newRoomCode = data.code;
+  document.getElementById('newRoomCode').textContent = data.code;
+  document.getElementById('createResult').style.display = 'block';
+  document.getElementById('createResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(_newRoomCode).then(() => alert('Code copied: ' + _newRoomCode));
+}
+
+function goToRoom() {
+  document.getElementById('viewCode').value = _newRoomCode;
+  showTab('view');
+  loadRoom();
+}
+
+async function submitPrediction() {
+  const code = document.getElementById('joinCode').value.trim().toUpperCase();
+  const username = document.getElementById('joinName').value.trim();
+  const p1 = document.getElementById('joinP1').value.trim();
+  const p2 = document.getElementById('joinP2').value.trim();
+  const p3 = document.getElementById('joinP3').value.trim();
+  const fastest_lap = document.getElementById('joinFL').value.trim();
+  if (!code || !username || !p1 || !p2 || !p3) return alert('Fill in all required fields.');
+  const data = await API.submitPrediction(code, { username, p1, p2, p3, fastest_lap });
+  if (!data) return alert('Error — room not found or already submitted.');
+  const res = document.getElementById('joinResult');
+  document.getElementById('joinResultMsg').textContent = `✅ ${data.message} (${username})`;
+  res.style.display = 'block';
+  res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function loadRoom() {
+  const code = document.getElementById('viewCode').value.trim().toUpperCase();
+  if (!code) return;
+  const room = await API.getRoom(code);
+  if (!room) return alert('Room not found.');
+  document.getElementById('roomView').style.display = 'block';
+  document.getElementById('roomRaceName').textContent = room.race_name;
+  document.getElementById('roomCodeDisplay').textContent = room.code;
+  document.getElementById('roomLockBadge').innerHTML = room.locked
+    ? '<span class="badge badge-red">🔒 Locked</span>'
+    : '<span class="badge badge-green">🟢 Open</span>';
+
+  const container = document.getElementById('roomPredictions');
+  if (!room.predictions?.length) {
+    container.innerHTML = '<div class="text-dim" style="padding:1rem;">No predictions yet. Share the code!</div>';
+    return;
+  }
+  const sorted = [...room.predictions].sort((a, b) => b.score - a.score);
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      ${sorted.map((p, i) => `
+        <div class="leaderboard-row ${i===0?'top1':i===1?'top2':i===2?'top3':''}">
+          <div class="lb-rank ${i===0?'text-gold':i===1?'text-dim':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+          <div style="flex:1;">
+            <div class="fw-700">${p.username}</div>
+            <div style="font-size:0.78rem;color:var(--text-dim);margin-top:2px;">
+              🥇 ${p.p1} &nbsp;·&nbsp; 🥈 ${p.p2} &nbsp;·&nbsp; 🥉 ${p.p3}
+              ${p.fastest_lap ? ` &nbsp;·&nbsp; ⚡ ${p.fastest_lap}` : ''}
+            </div>
+          </div>
+          <div class="lb-score">${room.locked ? p.score + ' pts' : '—'}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim);">
+      ${room.count} prediction${room.count !== 1 ? 's' : ''} submitted
+      ${room.locked ? '' : ' · Scores shown after race is scored.'}
+    </div>`;
+}
+
+async function scoreRoom() {
+  const code = document.getElementById('scoreCode').value.trim().toUpperCase();
+  const p1 = document.getElementById('actualP1').value.trim();
+  const p2 = document.getElementById('actualP2').value.trim();
+  const p3 = document.getElementById('actualP3').value.trim();
+  const fl = document.getElementById('actualFL').value.trim();
+  if (!code || !p1 || !p2 || !p3) return alert('Fill in all fields.');
+  const data = await API.scoreRoom(code, { actual_p1: p1, actual_p2: p2, actual_p3: p3, actual_fastest_lap: fl });
+  if (!data) return alert('Error scoring room.');
+  document.getElementById('scoreResult').style.display = 'block';
+  const lb = document.getElementById('finalLeaderboard');
+  lb.innerHTML = data.leaderboard.map((p, i) => `
+    <div class="leaderboard-row ${i===0?'top1':i===1?'top2':i===2?'top3':''}">
+      <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div style="flex:1;">
+        <div class="fw-700">${p.username}</div>
+        <div style="font-size:0.78rem;color:var(--text-dim);margin-top:2px;">
+          Predicted: 🥇${p.p1} · 🥈${p.p2} · 🥉${p.p3}
+        </div>
+      </div>
+      <div class="lb-score">${p.score} pts</div>
+    </div>`).join('');
+  document.getElementById('scoreResult').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

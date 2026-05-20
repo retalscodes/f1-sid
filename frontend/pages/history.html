@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>History — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html" class="active">History</a></li>
+    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div style="background:linear-gradient(135deg,rgba(232,0,45,0.12),transparent 60%),var(--bg2);border-bottom:1px solid var(--border);padding:3rem 2rem;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="section-tag">F1 History</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">📚 Every Season. Every Team. Every Driver.</h1>
+      <p style="color:var(--text-dim);max-width:500px;">Explore the full history of Formula 1 from 1950 to today.</p>
+    </div>
+  </div>
+
+  <div class="section" style="max-width:1200px;">
+
+    <!-- Mode selector -->
+    <div class="tabs" style="margin-bottom:2rem;">
+      <button class="tab active" onclick="setMode('season')">By Season</button>
+      <button class="tab" onclick="setMode('team')">By Team</button>
+      <button class="tab" onclick="setMode('driver')">By Driver</button>
+    </div>
+
+    <!-- BY SEASON -->
+    <div id="mode-season">
+      <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:2rem;">
+        <div>
+          <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Season</label>
+          <select class="input" id="seasonSelect" style="width:140px;" onchange="loadSeason()">
+            <option value="">Pick year</option>
+          </select>
+        </div>
+      </div>
+      <div id="seasonContent"></div>
+    </div>
+
+    <!-- BY TEAM -->
+    <div id="mode-team" style="display:none;">
+      <div style="margin-bottom:2rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Select Constructor</div>
+        <div id="teamGrid" class="grid-auto"></div>
+      </div>
+      <div id="teamContent" style="display:none;">
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+          <button class="btn btn-ghost" onclick="closeTeam()">← Back</button>
+          <h2 class="font-mono fw-700" id="teamTitle"></h2>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1.5rem;">
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Season</label>
+            <select class="input" id="teamSeasonSelect" style="width:140px;" onchange="loadTeamSeason()">
+              <option value="">Pick year</option>
+            </select>
+          </div>
+        </div>
+        <div id="teamDrivers"></div>
+      </div>
+    </div>
+
+    <!-- BY DRIVER -->
+    <div id="mode-driver" style="display:none;">
+      <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:2rem;">
+        <div style="flex:1;min-width:200px;">
+          <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Driver ID (e.g. verstappen, hamilton, leclerc)</label>
+          <input class="input" id="driverIdInput" placeholder="verstappen" />
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Season</label>
+          <select class="input" id="driverSeasonSelect" style="width:140px;">
+            <option value="">All seasons</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="loadDriver()">Search</button>
+      </div>
+      <div id="driverContent"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><div class="fallback">🦥</div></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Online</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">History?! I WAS THERE for most of it. Ask me anything! 🦥📚</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid..." />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle"><span class="fallback-face">🦥</span></button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+let currentMode = 'season';
+let currentTeam = null;
+
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+function setMode(mode) {
+  currentMode = mode;
+  ['season','team','driver'].forEach(m => {
+    document.getElementById('mode-' + m).style.display = m === mode ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((btn, i) => {
+    btn.classList.toggle('active', ['season','team','driver'][i] === mode);
+  });
+}
+
+// Populate year dropdowns
+(function populateYears() {
+  const years = [];
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear; y >= 1950; y--) years.push(y);
+  ['seasonSelect','teamSeasonSelect','driverSeasonSelect'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    years.forEach(y => {
+      const opt = document.createElement('option');
+      opt.value = y; opt.textContent = y;
+      if (y === currentYear) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+})();
+
+// Load constructors for team mode
+(async function loadTeamGrid() {
+  const data = await API.getConstructors();
+  const grid = document.getElementById('teamGrid');
+  const TEAM_IDS = {
+    'red_bull':'Red Bull Racing','ferrari':'Scuderia Ferrari','mercedes':'Mercedes',
+    'mclaren':'McLaren','aston_martin':'Aston Martin','alpine':'Alpine F1 Team',
+    'williams':'Williams','haas':'Haas F1 Team','rb':'RB F1 Team','kick_sauber':'Kick Sauber'
+  };
+  const TEAM_FLAGS = {
+    'red_bull':'🇦🇹','ferrari':'🇮🇹','mercedes':'🇩🇪','mclaren':'🇬🇧','aston_martin':'🇬🇧',
+    'alpine':'🇫🇷','williams':'🇬🇧','haas':'🇺🇸','rb':'🇮🇹','kick_sauber':'🇨🇭'
+  };
+  grid.innerHTML = Object.entries(TEAM_IDS).map(([id, name]) => {
+    const color = getTeamColor(name);
+    return `
+      <div class="card" style="cursor:pointer;border-left:4px solid ${color};" onclick="selectTeam('${id}','${name}','${color}')">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">${TEAM_FLAGS[id]||'🏎️'}</div>
+        <div class="fw-700">${name}</div>
+        <div style="font-size:0.75rem;color:var(--text-dim);margin-top:4px;">Click to explore</div>
+      </div>`;
+  }).join('');
+})();
+
+async function selectTeam(id, name, color) {
+  currentTeam = id;
+  document.getElementById('teamGrid').style.display = 'none';
+  document.getElementById('teamContent').style.display = 'block';
+  document.getElementById('teamTitle').innerHTML = `<span style="color:${color}">${name}</span>`;
+  await loadTeamSeason();
+}
+
+function closeTeam() {
+  document.getElementById('teamGrid').style.display = 'grid';
+  document.getElementById('teamContent').style.display = 'none';
+  currentTeam = null;
+}
+
+async function loadTeamSeason() {
+  if (!currentTeam) return;
+  const year = document.getElementById('teamSeasonSelect').value || new Date().getFullYear();
+  const el = document.getElementById('teamDrivers');
+  el.innerHTML = '<div class="loading-state"><div class="spinner"></div></div>';
+  const drivers = await API.getConstructorSeasonDrivers(currentTeam, year);
+  if (!drivers?.length) { el.innerHTML = '<div class="text-dim" style="padding:1rem;">No data for this season.</div>'; return; }
+  el.innerHTML = `
+    <div class="grid-3">
+      ${drivers.map(d => `
+        <div class="driver-card">
+          <div class="driver-number">${d.permanentNumber || '—'}</div>
+          <div class="driver-info">
+            <div class="driver-name">${getFlag(d.nationality)} ${d.givenName} <strong>${d.familyName}</strong></div>
+            <div class="driver-team" style="margin-top:4px;">
+              ${d.position !== '—' ? `<span class="badge badge-gray">P${d.position}</span>` : ''}
+              <span style="margin-left:4px;">${d.points} pts · ${d.wins} wins</span>
+            </div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+async function loadSeason() {
+  const year = document.getElementById('seasonSelect').value;
+  if (!year) return;
+  const el = document.getElementById('seasonContent');
+  el.innerHTML = '<div class="loading-state"><div class="spinner"></div><div>Loading season data...</div></div>';
+  const data = await API.getSeasonOverview(year);
+  if (!data) { el.innerHTML = '<div class="text-dim">Failed to load.</div>'; return; }
+
+  const dStandings = data.driver_standings?.slice(0, 10) || [];
+  const cStandings = data.constructor_standings?.slice(0, 10) || [];
+  const maxDpts = parseFloat(dStandings[0]?.points || 1);
+  const maxCpts = parseFloat(cStandings[0]?.points || 1);
+
+  el.innerHTML = `
+    <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:2rem;">
+      <div class="badge badge-red">${year} Season</div>
+      <div class="badge badge-gray">${data.races} Races</div>
+      ${dStandings[0] ? `<div class="badge badge-gold">👑 ${dStandings[0].Driver.givenName} ${dStandings[0].Driver.familyName}</div>` : ''}
+    </div>
+    <div class="grid-2" style="gap:2rem;margin-bottom:3rem;">
+      <div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Drivers</div>
+        <div class="bar-chart">
+          ${dStandings.map((s, i) => {
+            const name = `${s.Driver.givenName[0]}. ${s.Driver.familyName}`;
+            const pts = parseFloat(s.points);
+            const team = s.Constructors?.[0]?.name || '';
+            const color = getTeamColor(team);
+            return `<div class="bar-row fade-in" style="animation-delay:${i*0.04}s">
+              <div class="bar-label"><span class="${posClass(s.position)}" style="margin-right:0.4rem">${s.position}</span>${getFlag(s.Driver.nationality)} ${name}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${(pts/maxDpts*100).toFixed(1)}%;background:${color}"></div></div>
+              <div class="bar-value">${pts}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Constructors</div>
+        <div class="bar-chart">
+          ${cStandings.map((s, i) => {
+            const pts = parseFloat(s.points);
+            const color = getTeamColor(s.Constructor.name);
+            return `<div class="bar-row fade-in" style="animation-delay:${i*0.04}s">
+              <div class="bar-label"><span class="${posClass(s.position)}" style="margin-right:0.4rem">${s.position}</span>${s.Constructor.name}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${(pts/maxCpts*100).toFixed(1)}%;background:${color}"></div></div>
+              <div class="bar-value">${pts}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Race Calendar</div>
+      <div class="grid-auto">
+        ${(data.schedule || []).map(r => `
+          <div class="card" style="padding:1rem;">
+            <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:4px;">Round ${r.round} · ${r.date}</div>
+            <div class="fw-700" style="font-size:0.9rem;">${getFlag(r.Circuit?.Location?.country||'')} ${r.raceName}</div>
+            <div style="font-size:0.75rem;color:var(--text-dim);margin-top:4px;">${r.Circuit?.circuitName || ''}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+async function loadDriver() {
+  const driverId = document.getElementById('driverIdInput').value.trim().toLowerCase();
+  const year = document.getElementById('driverSeasonSelect').value;
+  if (!driverId) return;
+  const el = document.getElementById('driverContent');
+  el.innerHTML = '<div class="loading-state"><div class="spinner"></div></div>';
+  if (!year) {
+    const profile = await API.getDriverProfile(driverId);
+    if (!profile) { el.innerHTML = '<div class="text-dim">Driver not found.</div>'; return; }
+    el.innerHTML = `
+      <div class="card card-accent" style="margin-bottom:2rem;max-width:400px;">
+        <div class="section-tag">Driver Profile</div>
+        <div class="font-mono fw-700" style="font-size:1.3rem;margin-top:0.5rem;">${driverId.charAt(0).toUpperCase()+driverId.slice(1)}</div>
+        <div style="margin-top:1rem;">
+          <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:0.5rem;">Active Seasons: ${profile.seasons?.length || 0}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+            ${(profile.seasons||[]).map(s => `<span class="badge badge-gray">${s.season}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+  const results = await API.getDriverYearResults(driverId, year);
+  if (!results?.length) { el.innerHTML = '<div class="text-dim">No results found for this driver/season.</div>'; return; }
+  const wins = results.filter(r => r.position === '1').length;
+  const podiums = results.filter(r => parseInt(r.position) <= 3).length;
+  const pts = results.reduce((s, r) => s + parseFloat(r.points||0), 0);
+  el.innerHTML = `
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;">
+      <div class="card" style="padding:1rem 1.5rem;text-align:center;">
+        <div class="font-mono fw-900 text-red" style="font-size:2rem;">${pts}</div>
+        <div style="font-size:0.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;">Points</div>
+      </div>
+      <div class="card" style="padding:1rem 1.5rem;text-align:center;">
+        <div class="font-mono fw-900 text-gold" style="font-size:2rem;">${wins}</div>
+        <div style="font-size:0.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;">Wins</div>
+      </div>
+      <div class="card" style="padding:1rem 1.5rem;text-align:center;">
+        <div class="font-mono fw-900" style="font-size:2rem;">${podiums}</div>
+        <div style="font-size:0.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;">Podiums</div>
+      </div>
+      <div class="card" style="padding:1rem 1.5rem;text-align:center;">
+        <div class="font-mono fw-900" style="font-size:2rem;">${results.length}</div>
+        <div style="font-size:0.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;">Races</div>
+      </div>
+    </div>
+    <table class="standings-table">
+      <thead><tr><th>Round</th><th>Race</th><th>Grid</th><th>Pos</th><th>Points</th><th>Status</th></tr></thead>
+      <tbody>
+        ${results.map(r => `
+          <tr>
+            <td class="font-mono text-dim">${r.round}</td>
+            <td>${getFlag(r.country)} ${r.raceName}</td>
+            <td class="font-mono text-dim">${r.grid}</td>
+            <td><span class="${posClass(r.position)}">${r.position}</span></td>
+            <td class="font-mono text-red">${r.points}</td>
+            <td style="font-size:0.8rem;color:${r.status==='Finished'?'var(--text-dim)':'var(--red)'};">${r.status}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// Init: load current season
+loadSeason();
+</script>
+</body>
+</html>
