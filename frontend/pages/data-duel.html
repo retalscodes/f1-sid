@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Duel — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    .mode-tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .mode-tab {
+      padding:0.6rem 1.4rem; border-radius:6px; border:1px solid var(--border);
+      background:transparent; color:var(--text-dim); font-family:var(--font-mono);
+      font-size:0.8rem; font-weight:700; letter-spacing:1px; cursor:pointer;
+      text-transform:uppercase; transition:all 0.2s;
+    }
+    .mode-tab.active { background:var(--red); color:#fff; border-color:var(--red); }
+    .driver-vs-hero {
+      display:grid; grid-template-columns:1fr auto 1fr; gap:1.5rem; align-items:center;
+      margin-bottom:2.5rem; text-align:center;
+    }
+    .driver-hero-card { padding:1.5rem; border-radius:12px; border:1px solid var(--border); background:var(--bg2); }
+    .driver-hero-card.d1 { border-top:3px solid var(--red); }
+    .driver-hero-card.d2 { border-top:3px solid #3671C6; }
+    .driver-hero-name { font-family:var(--font-mono); font-size:1.4rem; font-weight:900; text-transform:uppercase; }
+    .driver-hero-era { font-size:0.75rem; color:var(--text-dim); margin-top:0.25rem; letter-spacing:1px; }
+    .vs-divider { font-family:var(--font-mono); font-size:2.5rem; font-weight:900; color:var(--red); }
+    .career-stat-row {
+      display:grid; grid-template-columns:1fr 1fr 1fr; align-items:center;
+      padding:0.75rem 0; border-bottom:1px solid var(--border);
+    }
+    .career-stat-row:last-child { border-bottom:none; }
+    .stat-val { font-family:var(--font-mono); font-size:1.5rem; font-weight:900; }
+    .stat-val.d1 { color:var(--red); }
+    .stat-val.d2 { color:#3671C6; }
+    .stat-label { text-align:center; font-size:0.7rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); }
+    .h2h-bar-track { height:8px; background:var(--border); border-radius:4px; overflow:hidden; display:flex; }
+    .quick-picks { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1rem; }
+    .quick-label { font-size:0.75rem; color:var(--text-dim); margin-bottom:0.4rem; letter-spacing:1px; text-transform:uppercase; }
+    .era-note { font-size:0.7rem; color:var(--text-dim); font-style:italic; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
+    .chart-container { position:relative; height:300px; margin-top:1rem; }
+    .abbr-hint { font-size:0.72rem; color:var(--text-dim); margin-top:0.35rem; }
+    .telemetry-badge {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      background:rgba(232,0,45,0.12); border:1px solid rgba(232,0,45,0.3);
+      color:var(--red); border-radius:20px; padding:0.25rem 0.75rem;
+      font-size:0.72rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+    }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="data-duel.html" class="active">Data Duel</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="engineering.html">Engineering</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+    <li><a href="media.html">Media</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div style="background:linear-gradient(135deg,rgba(232,0,45,0.12),transparent 60%),var(--bg2);border-bottom:1px solid var(--border);padding:3rem 2rem;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="section-tag">Data Duel</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.5rem;">📊 Driver Data Duel</h1>
+      <p style="color:var(--text-dim);max-width:640px;">Career battles. Season showdowns. Real race telemetry. Pit charts. Powered by FastF1 and Jolpica — this is F1 data done right.</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <span class="telemetry-badge">⚡ FastF1 Telemetry</span>
+        <span class="telemetry-badge">📈 Lap Charts</span>
+        <span class="telemetry-badge">🏎 Tyre Strategy</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="max-width:1100px;">
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tabCareer" onclick="switchMode('career')">🏆 Career Battle</button>
+      <button class="mode-tab" id="tabSeason" onclick="switchMode('season')">📅 Season Duel</button>
+      <button class="mode-tab" id="tabTelemetry" onclick="switchMode('telemetry')">⚡ Race Telemetry</button>
+      <button class="mode-tab" id="tabStrategy" onclick="switchMode('strategy')">🏎 Tyre Strategy</button>
+    </div>
+
+    <!-- Input Card -->
+    <div class="card card-accent" style="margin-bottom:2rem;">
+      <div id="driverInputs" class="grid-2" style="gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Driver 1</label>
+          <input class="input" id="d1Input" placeholder="Senna, Hamilton, Max, Kimi…" />
+          <div class="abbr-hint" id="d1AbbrHint" style="display:none;">3-letter code: <strong id="d1AbbrVal"></strong></div>
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Driver 2</label>
+          <input class="input" id="d2Input" placeholder="Schumacher, Verstappen, Norris…" />
+          <div class="abbr-hint" id="d2AbbrHint" style="display:none;">3-letter code: <strong id="d2AbbrVal"></strong></div>
+        </div>
+      </div>
+
+      <div id="seasonSelectorRow" style="display:none;margin-bottom:1rem;">
+        <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Season</label>
+        <select class="input" id="h2hYear" style="width:150px;"></select>
+      </div>
+
+      <div id="telemetryControls" style="display:none;margin-bottom:1rem;">
+        <div class="grid-2" style="gap:1rem;">
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Year</label>
+            <select class="input" id="telemYear" style="width:120px;" onchange="loadTelemetryRounds()"></select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:0.5rem;">Race</label>
+            <select class="input" id="telemRound" style="width:220px;"><option>Select year first</option></select>
+          </div>
+        </div>
+        <p style="font-size:0.75rem;color:var(--text-dim);margin-top:0.75rem;">Use 3-letter driver abbreviations above (e.g. VER, HAM, LEC, NOR).</p>
+      </div>
+
+      <button class="btn btn-primary" id="compareBtn" onclick="runComparison()">📊 Compare</button>
+
+      <div style="margin-top:1.25rem;" id="quickPicksSection">
+        <div class="quick-label">Famous matchups</div>
+        <div class="quick-picks">
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.7rem;" onclick="setQuick('senna','michael_schumacher',null,'career')">Senna vs Schumacher</button>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.7rem;" onclick="setQuick('hamilton','michael_schumacher',null,'career')">Hamilton vs Schumacher</button>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.7rem;" onclick="setQuick('hamilton','max_verstappen','2021','season')">Hamilton vs Verstappen 2021</button>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.7rem;" onclick="setQuick('norris','piastri','2024','season')">Norris vs Piastri 2024</button>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.7rem;" onclick="setQuick('leclerc','sainz','2023','season')">Leclerc vs Sainz 2023</button>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.7rem;" onclick="setQuick('prost','senna','1989','season')">Prost vs Senna 1989</button>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.3rem 0.7rem;" onclick="setQuick('raikkonen','max_verstappen',null,'career')">Kimi vs Verstappen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error + Loading -->
+    <div id="duelError" style="display:none;" class="card"><div style="color:var(--red);font-weight:700;">⚠️ <span id="duelErrorMsg"></span></div></div>
+    <div id="duelLoading" style="display:none;" class="card"><div class="loading-state"><div class="spinner"></div><span style="margin-left:1rem;color:var(--text-dim);">Crunching data…</span></div></div>
+
+    <!-- ═══ CAREER RESULT ═══ -->
+    <div id="careerResult" style="display:none;">
+      <div class="driver-vs-hero">
+        <div class="driver-hero-card d1"><div id="c1Flag" style="font-size:1.2rem;margin-bottom:0.3rem;"></div><div class="driver-hero-name" id="c1Name">—</div><div class="driver-hero-era" id="c1Era"></div></div>
+        <div class="vs-divider">VS</div>
+        <div class="driver-hero-card d2"><div id="c2Flag" style="font-size:1.2rem;margin-bottom:0.3rem;"></div><div class="driver-hero-name" id="c2Name">—</div><div class="driver-hero-era" id="c2Era"></div></div>
+      </div>
+      <div class="card" style="margin-bottom:2rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.25rem;">Career Statistics</div>
+        <div id="careerStatsTable"></div>
+        <div class="era-note" id="eraNote"></div>
+      </div>
+      <div class="card" style="margin-bottom:2rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.25rem;">Head-to-Head Breakdown</div>
+        <div id="careerBars"></div>
+      </div>
+    </div>
+
+    <!-- ═══ SEASON RESULT ═══ -->
+    <div id="seasonResult" style="display:none;">
+      <div class="grid-2" style="gap:1.5rem;margin-bottom:2rem;" id="seasonSummaryCards"></div>
+
+      <div class="card" style="margin-bottom:2rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">Points Progression</div>
+        <div class="chart-container"><canvas id="pointsChart"></canvas></div>
+      </div>
+
+      <div class="card" style="margin-bottom:2rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Head-to-Head Bars</div>
+        <div id="seasonBars"></div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">Race by Race</div>
+        <div style="overflow-x:auto;">
+          <table class="standings-table" id="seasonTable">
+            <thead><tr><th>Race</th><th id="sThD1" style="color:var(--red)">D1</th><th id="sThD2" style="color:#3671C6">D2</th><th>Δ Pos</th><th>Ahead</th></tr></thead>
+            <tbody id="seasonTableBody"></tbody>
+          </table>
+        </div>
+        <div id="seasonNoRaces" style="display:none;text-align:center;padding:2rem;color:var(--text-dim);">No shared races found.</div>
+      </div>
+    </div>
+
+    <!-- ═══ TELEMETRY RESULT ═══ -->
+    <div id="telemetryResult" style="display:none;">
+      <div class="card" style="margin-bottom:2rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">⚡ Lap Time Comparison</div>
+        <div class="chart-container"><canvas id="lapChart"></canvas></div>
+        <div style="display:flex;gap:1.5rem;margin-top:1rem;flex-wrap:wrap;" id="lapStats"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:2rem;">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">Qualifying Sector Times</div>
+        <div class="chart-container" style="height:220px;"><canvas id="qualiChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ STRATEGY RESULT ═══ -->
+    <div id="strategyResult" style="display:none;">
+      <div class="card">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;">🏎 Tyre Strategy — Full Grid</div>
+        <div id="strategyViz"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & FastF1.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">engineered in the slow lane · @ratatoolie</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><img src="../assets/img/sid.png" alt="Sid" onerror="this.parentElement.innerHTML='<div class=fallback>🦥</div>'" /></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Online</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">Data Duel mode! Real telemetry, real lap times, real drama. Ask me anything! 📊🦥</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid…" />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle">
+    <img src="../assets/img/sid.png" alt="Sid" onerror="this.outerHTML='<span class=fallback-face>🦥</span>'" />
+  </button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// Compound colours for tyre strategy
+const COMPOUND_COLORS = {
+  'SOFT':'#E8002D','MEDIUM':'#FFF200','HARD':'#FFFFFF',
+  'INTERMEDIATE':'#39B54A','WET':'#0067FF','UNKNOWN':'#888',
+};
+
+// Populate year dropdowns
+(function() {
+  const cur = new Date().getFullYear();
+  const sel = document.getElementById('h2hYear');
+  const tsel = document.getElementById('telemYear');
+  for (let y = cur; y >= 1950; y--) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    if (y === 2024) o.selected = true;
+    sel.appendChild(o);
+  }
+  for (let y = cur; y >= 2018; y--) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    if (y === cur) o.selected = true;
+    tsel.appendChild(o);
+  }
+})();
+
+let currentMode = 'career';
+let activeCharts = {};
+
+function destroyChart(id) {
+  if (activeCharts[id]) { activeCharts[id].destroy(); delete activeCharts[id]; }
+}
+
+function switchMode(mode) {
+  currentMode = mode;
+  ['career','season','telemetry','strategy'].forEach(m => {
+    document.getElementById('tab' + m.charAt(0).toUpperCase() + m.slice(1)).classList.toggle('active', m === mode);
+    document.getElementById(m + 'Result').style.display = 'none';
+  });
+  document.getElementById('seasonSelectorRow').style.display = mode === 'season' ? 'block' : 'none';
+  document.getElementById('telemetryControls').style.display = (mode === 'telemetry' || mode === 'strategy') ? 'block' : 'none';
+  document.getElementById('driverInputs').style.display = mode === 'strategy' ? 'none' : 'grid';
+  document.getElementById('quickPicksSection').style.display = (mode === 'telemetry' || mode === 'strategy') ? 'none' : 'block';
+
+  // Show abbr hints for telemetry mode
+  const showAbbrHint = mode === 'telemetry';
+  document.getElementById('d1AbbrHint').style.display = showAbbrHint ? 'block' : 'none';
+  document.getElementById('d2AbbrHint').style.display = showAbbrHint ? 'block' : 'none';
+
+  document.getElementById('duelError').style.display = 'none';
+}
+
+function setQuick(raw1, raw2, year, mode) {
+  document.getElementById('d1Input').value = raw1.replace(/_/g, ' ');
+  document.getElementById('d2Input').value = raw2.replace(/_/g, ' ');
+  if (mode) switchMode(mode);
+  if (year) document.getElementById('h2hYear').value = year;
+  runComparison();
+}
+
+function showError(msg) {
+  document.getElementById('duelErrorMsg').textContent = msg;
+  document.getElementById('duelError').style.display = 'block';
+  document.getElementById('duelLoading').style.display = 'none';
+}
+
+async function loadTelemetryRounds() {
+  const year = document.getElementById('telemYear').value;
+  const sel = document.getElementById('telemRound');
+  sel.innerHTML = '<option>Loading…</option>';
+  const rounds = await API.getAnalyticsRounds(year);
+  sel.innerHTML = '';
+  if (!rounds || rounds.length === 0) {
+    sel.innerHTML = '<option>No data</option>'; return;
+  }
+  rounds.forEach(r => {
+    const o = document.createElement('option');
+    o.value = r.round;
+    o.textContent = `R${r.round} — ${r.name}`;
+    sel.appendChild(o);
+  });
+}
+// Auto-load rounds on page open for telemetry
+document.getElementById('telemYear').addEventListener('change', loadTelemetryRounds);
+
+async function runComparison() {
+  const raw1 = document.getElementById('d1Input').value.trim();
+  const raw2 = document.getElementById('d2Input').value.trim();
+
+  document.getElementById('duelError').style.display = 'none';
+  ['career','season','telemetry','strategy'].forEach(m => document.getElementById(m+'Result').style.display = 'none');
+  document.getElementById('duelLoading').style.display = 'block';
+
+  if (currentMode === 'career') {
+    if (!raw1 || !raw2) { showError('Enter both driver names.'); return; }
+    await runCareer(resolveDriverId(raw1), resolveDriverId(raw2));
+  } else if (currentMode === 'season') {
+    if (!raw1 || !raw2) { showError('Enter both driver names.'); return; }
+    await runSeason(resolveDriverId(raw1), resolveDriverId(raw2));
+  } else if (currentMode === 'telemetry') {
+    if (!raw1 || !raw2) { showError('Enter both driver abbreviations (e.g. VER, HAM).'); return; }
+    await runTelemetry(raw1.toUpperCase(), raw2.toUpperCase());
+  } else if (currentMode === 'strategy') {
+    await runStrategy();
+  }
+}
+
+// ═══ CAREER ═══
+async function runCareer(id1, id2) {
+  const [s1, s2] = await Promise.all([API.getCareerStats(id1), API.getCareerStats(id2)]);
+  document.getElementById('duelLoading').style.display = 'none';
+  if (!s1 || s1.error) { showError(`Driver "${id1}" not found. Try the full name or Ergast ID.`); return; }
+  if (!s2 || s2.error) { showError(`Driver "${id2}" not found. Try the full name or Ergast ID.`); return; }
+
+  const name1 = s1.driver?.givenName ? `${s1.driver.givenName} ${s1.driver.familyName}` : id1.replace(/_/g,' ');
+  const name2 = s2.driver?.givenName ? `${s2.driver.givenName} ${s2.driver.familyName}` : id2.replace(/_/g,' ');
+  document.getElementById('c1Name').textContent = name1.toUpperCase();
+  document.getElementById('c2Name').textContent = name2.toUpperCase();
+  document.getElementById('c1Flag').textContent = getFlag(s1.driver?.nationality||'')||'🏁';
+  document.getElementById('c2Flag').textContent = getFlag(s2.driver?.nationality||'')||'🏁';
+  document.getElementById('c1Era').textContent = s1.seasons_count > 0 ? `${s1.first_season}–${s1.last_season} · ${s1.seasons_count} seasons` : '';
+  document.getElementById('c2Era').textContent = s2.seasons_count > 0 ? `${s2.first_season}–${s2.last_season} · ${s2.seasons_count} seasons` : '';
+
+  const stats = [
+    { label:'🏆 Championships', v1:s1.championships, v2:s2.championships },
+    { label:'🥇 Race Wins',      v1:s1.wins,          v2:s2.wins },
+    { label:'🥉 Podiums',        v1:s1.podiums,       v2:s2.podiums },
+    { label:'📊 Career Points*', v1:s1.points,        v2:s2.points },
+    { label:'📅 Seasons',        v1:s1.seasons_count, v2:s2.seasons_count },
+    { label:'🎯 Best Finish', v1: s1.best_championship===1?'🥇 Champ':`P${s1.best_championship}`, v2:s2.best_championship===1?'🥇 Champ':`P${s2.best_championship}`, noBar:true },
+  ];
+  document.getElementById('careerStatsTable').innerHTML = stats.map(st => `
+    <div class="career-stat-row">
+      <div style="text-align:right;"><span class="stat-val d1">${st.v1}</span></div>
+      <div class="stat-label">${st.label}</div>
+      <div style="text-align:left;"><span class="stat-val d2">${st.v2}</span></div>
+    </div>`).join('');
+
+  document.getElementById('careerBars').innerHTML = stats.filter(s=>!s.noBar).map(m => {
+    const total=(parseFloat(m.v1)+parseFloat(m.v2))||1;
+    const p1=(parseFloat(m.v1)/total*100).toFixed(1);
+    const p2=(100-parseFloat(p1)).toFixed(1);
+    return `<div style="margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:0.4rem;">
+        <span class="fw-700" style="color:var(--red)">${m.v1}</span>
+        <span style="color:var(--text-dim);">${m.label}</span>
+        <span class="fw-700" style="color:#3671C6">${m.v2}</span>
+      </div>
+      <div class="h2h-bar-track">
+        <div style="width:${p1}%;background:var(--red);transition:width 0.6s ease;"></div>
+        <div style="width:${p2}%;background:#3671C6;transition:width 0.6s ease;"></div>
+      </div></div>`;
+  }).join('');
+
+  const crossEra = parseInt(s1.last_season)<parseInt(s2.first_season)||parseInt(s2.last_season)<parseInt(s1.first_season);
+  document.getElementById('eraNote').textContent = crossEra
+    ? `* Points across different eras (${s1.first_season}–${s1.last_season} vs ${s2.first_season}–${s2.last_season}) — not directly comparable.`
+    : '* Career total points.';
+  document.getElementById('careerResult').style.display = 'block';
+  document.getElementById('careerResult').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ SEASON DUEL ═══
+async function runSeason(id1, id2) {
+  const year = document.getElementById('h2hYear').value;
+  const [h2hData, duelData] = await Promise.all([
+    API.getH2H(year, id1, id2),
+    API.getSeasonDuel(year, id1, id2),
+  ]);
+  document.getElementById('duelLoading').style.display = 'none';
+
+  if (!h2hData?.summary) { showError(`No data for "${id1}" vs "${id2}" in ${year}.`); return; }
+
+  const s1 = h2hData.summary.driver1, s2 = h2hData.summary.driver2;
+  const r1_0 = h2hData.races.driver1[0], r2_0 = h2hData.races.driver2[0];
+  const d1Name = r1_0 ? `${r1_0.Driver?.givenName||''} ${r1_0.Driver?.familyName||id1}`.trim() : id1.replace(/_/g,' ');
+  const d2Name = r2_0 ? `${r2_0.Driver?.givenName||''} ${r2_0.Driver?.familyName||id2}`.trim() : id2.replace(/_/g,' ');
+  document.getElementById('sThD1').textContent = d1Name;
+  document.getElementById('sThD2').textContent = d2Name;
+
+  document.getElementById('seasonSummaryCards').innerHTML = `
+    <div class="card" style="border-top:3px solid var(--red);text-align:center;">
+      <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">${d1Name}</div>
+      <div style="display:flex;justify-content:space-around;gap:1rem;flex-wrap:wrap;">
+        <div><div class="font-mono fw-900" style="font-size:2rem;color:var(--red)">${s1.h2h_wins}</div><div style="font-size:0.7rem;color:var(--text-dim);">H2H Wins</div></div>
+        <div><div class="font-mono fw-900" style="font-size:2rem;">${s1.race_wins}</div><div style="font-size:0.7rem;color:var(--text-dim);">Race Wins</div></div>
+        <div><div class="font-mono fw-900" style="font-size:2rem;">${s1.podiums}</div><div style="font-size:0.7rem;color:var(--text-dim);">Podiums</div></div>
+        <div><div class="font-mono fw-900" style="font-size:2rem;">${s1.points}</div><div style="font-size:0.7rem;color:var(--text-dim);">Points</div></div>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid #3671C6;text-align:center;">
+      <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.75rem;">${d2Name}</div>
+      <div style="display:flex;justify-content:space-around;gap:1rem;flex-wrap:wrap;">
+        <div><div class="font-mono fw-900" style="font-size:2rem;color:#3671C6">${s2.h2h_wins}</div><div style="font-size:0.7rem;color:var(--text-dim);">H2H Wins</div></div>
+        <div><div class="font-mono fw-900" style="font-size:2rem;">${s2.race_wins}</div><div style="font-size:0.7rem;color:var(--text-dim);">Race Wins</div></div>
+        <div><div class="font-mono fw-900" style="font-size:2rem;">${s2.podiums}</div><div style="font-size:0.7rem;color:var(--text-dim);">Podiums</div></div>
+        <div><div class="font-mono fw-900" style="font-size:2rem;">${s2.points}</div><div style="font-size:0.7rem;color:var(--text-dim);">Points</div></div>
+      </div>
+    </div>`;
+
+  // Points progression chart
+  destroyChart('pointsChart');
+  if (duelData && duelData.labels?.length > 0) {
+    activeCharts['pointsChart'] = new Chart(document.getElementById('pointsChart'), {
+      type: 'line',
+      data: {
+        labels: duelData.labels,
+        datasets: [
+          { label: d1Name, data: duelData.d1_points_progression, borderColor:'#E8002D', backgroundColor:'rgba(232,0,45,0.1)', tension:0.3, fill:true, pointRadius:3 },
+          { label: d2Name, data: duelData.d2_points_progression, borderColor:'#3671C6', backgroundColor:'rgba(54,113,198,0.1)', tension:0.3, fill:true, pointRadius:3 },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ labels:{ color:'#F0F0F0' } } },
+        scales:{
+          x:{ ticks:{ color:'#888', maxTicksLimit:10 }, grid:{ color:'#2a2a2a' } },
+          y:{ ticks:{ color:'#888' }, grid:{ color:'#2a2a2a' } },
+        }
+      }
+    });
+  }
+
+  document.getElementById('seasonBars').innerHTML = [
+    {label:'H2H Race Wins',v1:s1.h2h_wins,v2:s2.h2h_wins},
+    {label:'Race Wins',v1:s1.race_wins,v2:s2.race_wins},
+    {label:'Podiums',v1:s1.podiums,v2:s2.podiums},
+    {label:'Points',v1:s1.points,v2:s2.points},
+  ].map(m => {
+    const total=(parseFloat(m.v1)+parseFloat(m.v2))||1;
+    const p1=(parseFloat(m.v1)/total*100).toFixed(1);
+    return `<div style="margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:0.4rem;">
+        <span class="fw-700" style="color:var(--red)">${m.v1}</span>
+        <span style="color:var(--text-dim);">${m.label}</span>
+        <span class="fw-700" style="color:#3671C6">${m.v2}</span>
+      </div>
+      <div class="h2h-bar-track">
+        <div style="width:${p1}%;background:var(--red);"></div>
+        <div style="width:${100-parseFloat(p1)}%;background:#3671C6;"></div>
+      </div></div>`;
+  }).join('');
+
+  const races1=h2hData.races.driver1, races2=h2hData.races.driver2;
+  if (!races1.length) {
+    document.getElementById('seasonNoRaces').style.display='block';
+    document.getElementById('seasonTableBody').innerHTML='';
+  } else {
+    document.getElementById('seasonNoRaces').style.display='none';
+    document.getElementById('seasonTableBody').innerHTML = races1.map((r1,i) => {
+      const r2=races2[i]; if(!r2) return '';
+      const p1=parseInt(r1.position), p2=parseInt(r2.position), delta=p2-p1;
+      return `<tr>
+        <td>${getFlag(r1.Circuit?.Location?.country||'')} ${r1.raceName}</td>
+        <td><span class="${posClass(p1)}">${p1}</span></td>
+        <td><span class="${posClass(p2)}">${p2}</span></td>
+        <td class="font-mono" style="color:${delta>0?'var(--red)':delta<0?'#3671C6':'var(--text-dim)'}">${delta>0?'+'+delta:delta}</td>
+        <td>${p1<p2?`<span style="color:var(--red)">🔴 ${d1Name}</span>`:`<span style="color:#3671C6">🔵 ${d2Name}</span>`}</td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('seasonResult').style.display='block';
+  document.getElementById('seasonResult').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ TELEMETRY ═══
+async function runTelemetry(abbr1, abbr2) {
+  const year = document.getElementById('telemYear').value;
+  const round = document.getElementById('telemRound').value;
+  if (!round || round === 'Loading…' || round === 'No data') { showError('Select a race first.'); return; }
+
+  const [lapData, qualiData] = await Promise.all([
+    API.getLapComparison(year, round, abbr1, abbr2),
+    API.getQualiComparison(year, round, abbr1, abbr2),
+  ]);
+  document.getElementById('duelLoading').style.display = 'none';
+
+  if (lapData?.error) { showError(`FastF1: ${lapData.error}`); return; }
+
+  const d1Laps = lapData?.driver1?.laps || [];
+  const d2Laps = lapData?.driver2?.laps || [];
+
+  destroyChart('lapChart');
+  if (d1Laps.length || d2Laps.length) {
+    const labels = [...new Set([...d1Laps.map(l=>l.lap), ...d2Laps.map(l=>l.lap)])].sort((a,b)=>a-b);
+    const d1Map = Object.fromEntries(d1Laps.map(l=>[l.lap, l.time]));
+    const d2Map = Object.fromEntries(d2Laps.map(l=>[l.lap, l.time]));
+    activeCharts['lapChart'] = new Chart(document.getElementById('lapChart'), {
+      type:'line',
+      data:{
+        labels,
+        datasets:[
+          { label: abbr1, data: labels.map(l=>d1Map[l]||null), borderColor:'#E8002D', tension:0.2, pointRadius:2, spanGaps:true },
+          { label: abbr2, data: labels.map(l=>d2Map[l]||null), borderColor:'#3671C6', tension:0.2, pointRadius:2, spanGaps:true },
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ labels:{ color:'#F0F0F0' } }, tooltip:{ callbacks:{ label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(3)}s` } } },
+        scales:{
+          x:{ title:{ display:true, text:'Lap', color:'#888' }, ticks:{ color:'#888', maxTicksLimit:15 }, grid:{ color:'#2a2a2a' } },
+          y:{ title:{ display:true, text:'Lap Time (s)', color:'#888' }, ticks:{ color:'#888' }, grid:{ color:'#2a2a2a' } },
+        }
+      }
+    });
+
+    const d1Best = d1Laps.reduce((a,b)=>b.time<a.time?b:a, d1Laps[0]||{time:0});
+    const d2Best = d2Laps.reduce((a,b)=>b.time<a.time?b:a, d2Laps[0]||{time:0});
+    document.getElementById('lapStats').innerHTML = `
+      <div><span style="color:var(--red);font-weight:700;">${abbr1}</span> — Best: <strong>${d1Best.time?.toFixed(3)}s</strong> · Laps: ${d1Laps.length}</div>
+      <div><span style="color:#3671C6;font-weight:700;">${abbr2}</span> — Best: <strong>${d2Best.time?.toFixed(3)}s</strong> · Laps: ${d2Laps.length}</div>`;
+  }
+
+  // Quali sectors chart
+  destroyChart('qualiChart');
+  if (!qualiData?.error && (qualiData?.driver1?.s1 || qualiData?.driver2?.s1)) {
+    const qd1 = qualiData.driver1, qd2 = qualiData.driver2;
+    activeCharts['qualiChart'] = new Chart(document.getElementById('qualiChart'), {
+      type:'bar',
+      data:{
+        labels:['Sector 1','Sector 2','Sector 3'],
+        datasets:[
+          { label:abbr1, data:[qd1.s1, qd1.s2, qd1.s3], backgroundColor:'rgba(232,0,45,0.7)' },
+          { label:abbr2, data:[qd2.s1, qd2.s2, qd2.s3], backgroundColor:'rgba(54,113,198,0.7)' },
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{ labels:{ color:'#F0F0F0' } }, tooltip:{ callbacks:{ label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x?.toFixed(3)}s` } } },
+        scales:{
+          x:{ ticks:{ color:'#888' }, grid:{ color:'#2a2a2a' }, title:{ display:true, text:'Time (s)', color:'#888' } },
+          y:{ ticks:{ color:'#F0F0F0' }, grid:{ color:'#2a2a2a' } },
+        }
+      }
+    });
+  }
+
+  document.getElementById('telemetryResult').style.display = 'block';
+  document.getElementById('telemetryResult').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ STRATEGY ═══
+async function runStrategy() {
+  const year = document.getElementById('telemYear').value;
+  const round = document.getElementById('telemRound').value;
+  if (!round || round === 'Loading…') { showError('Select a race first.'); return; }
+
+  const data = await API.getTireStrategy(year, round);
+  document.getElementById('duelLoading').style.display = 'none';
+  if (data?.error) { showError(`FastF1: ${data.error}`); return; }
+
+  const strategy = data?.strategy || {};
+  const drivers = Object.keys(strategy);
+  if (!drivers.length) { showError('No strategy data for this race.'); return; }
+
+  const totalLaps = Math.max(...drivers.flatMap(d => strategy[d].map(s => s.end)));
+
+  const html = drivers.map(drv => {
+    const stints = strategy[drv];
+    const bars = stints.map(s => {
+      const pct = ((s.end - s.start + 1) / totalLaps * 100).toFixed(1);
+      const col = COMPOUND_COLORS[s.compound] || COMPOUND_COLORS['UNKNOWN'];
+      return `<div style="width:${pct}%;background:${col};height:100%;display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#000;overflow:hidden;" title="${s.compound} L${s.start}–${s.end}">${s.compound[0]}</div>`;
+    }).join('');
+    return `<div style="display:grid;grid-template-columns:60px 1fr;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
+      <div style="font-family:var(--font-mono);font-size:0.8rem;font-weight:700;">${drv}</div>
+      <div style="height:24px;border-radius:4px;overflow:hidden;display:flex;">${bars}</div>
+    </div>`;
+  }).join('');
+
+  const legend = Object.entries(COMPOUND_COLORS).map(([c,col]) =>
+    `<div style="display:flex;align-items:center;gap:0.4rem;"><div style="width:14px;height:14px;background:${col};border-radius:3px;border:1px solid #444;"></div><span style="font-size:0.72rem;">${c}</span></div>`
+  ).join('');
+
+  document.getElementById('strategyViz').innerHTML = `
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">${legend}</div>
+    ${html}`;
+  document.getElementById('strategyResult').style.display = 'block';
+  document.getElementById('strategyResult').scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>

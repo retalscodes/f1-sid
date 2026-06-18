@@ -129,7 +129,12 @@ async def season_drivers(year: int):
 async def career_stats(driver_id: str):
     standings_lists = await jolpica.get_driver_career_standings(driver_id)
     if not standings_lists:
-        return {"error": f"No data found for driver '{driver_id}'"}
+        # Fallback: try alternate ID formats (e.g. ayrton_senna → senna)
+        alt_id = driver_id.split("_")[-1] if "_" in driver_id else None
+        if alt_id:
+            standings_lists = await jolpica.get_driver_career_standings(alt_id)
+    if not standings_lists:
+        return {"error": f"No data found for driver '{driver_id}'. Check the Ergast driver ID."}
 
     total_wins = 0
     total_points = 0.0

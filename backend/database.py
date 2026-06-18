@@ -31,6 +31,23 @@ async def init_db():
                 UNIQUE(room_code, username)
             )
         """)
+        # Analytics cache: stores serialised JSON blobs keyed by cache_key
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS analytics_cache (
+                cache_key   TEXT PRIMARY KEY,
+                payload     TEXT NOT NULL,
+                cached_at   REAL NOT NULL
+            )
+        """)
+        # Jolpica result cache: faster repeated API calls
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS api_cache (
+                path        TEXT PRIMARY KEY,
+                payload     TEXT NOT NULL,
+                cached_at   REAL NOT NULL,
+                ttl         INTEGER NOT NULL DEFAULT 3600
+            )
+        """)
         await db.commit()
 
 

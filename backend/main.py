@@ -8,7 +8,7 @@ import os
 load_dotenv()
 
 from database import init_db
-from routes import races, live, history, championship, circuits, chat, predictions
+from routes import races, live, history, championship, circuits, chat, predictions, analytics
 
 
 @asynccontextmanager
@@ -33,6 +33,7 @@ app.include_router(championship.router, prefix="/api/championship", tags=["champ
 app.include_router(circuits.router, prefix="/api/circuits", tags=["circuits"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(predictions.router, prefix="/api/predictions", tags=["predictions"])
+app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
 
 # On Render, Netlify serves the frontend — only mount locally
 if not os.getenv("RENDER"):

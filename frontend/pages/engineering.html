@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engineering — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+  <style>
+    .eng-hero {
+      background: linear-gradient(135deg, rgba(232,0,45,0.15), transparent 60%), var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem;
+    }
+    .chapter-nav {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem;
+    }
+    .chapter-btn {
+      padding: 0.5rem 1.1rem; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-dim); font-family: var(--font-mono);
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; cursor: pointer;
+      text-transform: uppercase; transition: all 0.2s;
+    }
+    .chapter-btn:hover, .chapter-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+    .chapter { display: none; }
+    .chapter.active { display: block; }
+    .diagram-box {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem; margin: 1.5rem 0; text-align: center;
+    }
+    .spec-row {
+      display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;
+      padding: 0.65rem 0; border-bottom: 1px solid var(--border); align-items: start;
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
+    .spec-val { font-size: 0.9rem; color: var(--text); }
+    .stat-chip {
+      display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px;
+      background: rgba(232,0,45,0.12); border: 1px solid rgba(232,0,45,0.3);
+      color: var(--red); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700;
+      margin: 0.25rem;
+    }
+    .science-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem; margin-bottom: 1.5rem; border-left: 3px solid var(--red);
+    }
+    .science-card h3 { font-family: var(--font-mono); font-size: 1rem; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .aero-svg { width: 100%; max-width: 700px; height: auto; }
+    .formula-box {
+      background: rgba(232,0,45,0.05); border: 1px solid rgba(232,0,45,0.2);
+      border-radius: 8px; padding: 1rem 1.5rem; margin: 1rem 0;
+      font-family: var(--font-mono); font-size: 1rem; text-align: center; letter-spacing: 1px;
+    }
+    .timeline { position: relative; padding-left: 1.5rem; }
+    .timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--red); }
+    .timeline-item { position:relative; margin-bottom:1.5rem; padding-left:1rem; }
+    .timeline-item::before { content:''; position:absolute; left:-1.45rem; top:0.4rem; width:8px; height:8px; border-radius:50%; background:var(--red); }
+    .timeline-year { font-family:var(--font-mono); font-size:0.75rem; color:var(--red); font-weight:700; margin-bottom:0.2rem; }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="data-duel.html">Data Duel</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="engineering.html" class="active">Engineering</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+    <li><a href="media.html">Media</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div class="eng-hero">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="section-tag">Engineering Deep Dive</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">⚙️ The Science of F1</h1>
+      <p style="color:var(--text-dim);max-width:640px;">
+        Formula 1 cars are the most complex machines in motorsport. Every part is engineered to the absolute limit of physics.
+        Here's how it all actually works — aero, power units, tyres, active aero, and the numbers behind the speed.
+      </p>
+      <div style="margin-top:1rem;">
+        <span class="stat-chip">1000+ bhp</span>
+        <span class="stat-chip">~798kg total</span>
+        <span class="stat-chip">~3.5G braking</span>
+        <span class="stat-chip">360+ km/h top speed</span>
+        <span class="stat-chip">sub-2s pitstop</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="max-width:1100px;">
+
+    <div class="chapter-nav">
+      <button class="chapter-btn active" onclick="showChapter('aero')">🌬️ Aerodynamics</button>
+      <button class="chapter-btn" onclick="showChapter('pu')">🔥 Power Unit</button>
+      <button class="chapter-btn" onclick="showChapter('tyres')">🏎️ Tyres</button>
+      <button class="chapter-btn" onclick="showChapter('active')">⚡ Active Aero 2026</button>
+      <button class="chapter-btn" onclick="showChapter('chassis')">🏗️ Chassis & Safety</button>
+      <button class="chapter-btn" onclick="showChapter('data')">📊 Data & Sensors</button>
+    </div>
+
+    <!-- ═══ AERODYNAMICS ═══ -->
+    <div class="chapter active" id="ch-aero">
+      <div class="card" style="margin-bottom:2rem;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Aerodynamics</div>
+        <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:1rem;">How F1 Cars Stick to the Road</h2>
+        <p style="color:var(--text-dim);line-height:1.8;margin-bottom:1.5rem;">
+          An F1 car generates more aerodynamic downforce than its own weight. At 200 km/h, it could theoretically drive on the ceiling.
+          This is achieved through a precise combination of wings, floor, diffuser, and hundreds of aerodynamic details — all calculated to within fractions of a millimetre.
+        </p>
+
+        <!-- SVG car diagram -->
+        <div class="diagram-box">
+          <svg class="aero-svg" viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#E8002D"/>
+              </marker>
+              <marker id="arrB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#3671C6"/>
+              </marker>
+            </defs>
+            <!-- Car body -->
+            <ellipse cx="350" cy="155" rx="220" ry="38" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+            <rect x="260" y="120" width="180" height="35" rx="6" fill="#222" stroke="#333" stroke-width="1"/>
+            <!-- Front wing -->
+            <rect x="100" y="170" width="90" height="8" rx="3" fill="#E8002D"/>
+            <rect x="90" y="174" width="110" height="4" rx="2" fill="#c0001e"/>
+            <!-- Rear wing -->
+            <rect x="510" y="130" width="80" height="10" rx="3" fill="#E8002D"/>
+            <rect x="505" y="134" width="90" height="5" rx="2" fill="#c0001e"/>
+            <!-- Sidepods -->
+            <rect x="230" y="150" width="60" height="28" rx="4" fill="#2a2a2a" stroke="#444"/>
+            <rect x="410" y="150" width="60" height="28" rx="4" fill="#2a2a2a" stroke="#444"/>
+            <!-- Wheels -->
+            <circle cx="165" cy="185" r="28" fill="#111" stroke="#555" stroke-width="3"/>
+            <circle cx="165" cy="185" r="14" fill="#222"/>
+            <circle cx="535" cy="185" r="28" fill="#111" stroke="#555" stroke-width="3"/>
+            <circle cx="535" cy="185" r="14" fill="#222"/>
+            <!-- Halo -->
+            <path d="M300 122 Q350 105 400 122" stroke="#FFD700" stroke-width="4" fill="none"/>
+            <!-- Diffuser -->
+            <path d="M480 178 L560 198 L480 198 Z" fill="#333" stroke="#555"/>
+
+            <!-- Arrows: downforce -->
+            <line x1="145" y1="90" x2="145" y2="158" stroke="#E8002D" stroke-width="2" marker-end="url(#arr)"/>
+            <line x1="350" y1="70" x2="350" y2="118" stroke="#E8002D" stroke-width="2" marker-end="url(#arr)"/>
+            <line x1="550" y1="85" x2="550" y2="128" stroke="#E8002D" stroke-width="2" marker-end="url(#arr)"/>
+
+            <!-- Arrows: airflow -->
+            <line x1="30" y1="155" x2="88" y2="155" stroke="#3671C6" stroke-width="2" marker-end="url(#arrB)"/>
+            <line x1="610" y1="145" x2="670" y2="135" stroke="#3671C6" stroke-width="2" marker-end="url(#arrB)"/>
+
+            <!-- Labels -->
+            <text x="135" y="82" fill="#E8002D" font-size="11" font-family="monospace">FRONT WING</text>
+            <text x="323" y="62" fill="#E8002D" font-size="11" font-family="monospace">COCKPIT</text>
+            <text x="518" y="78" fill="#E8002D" font-size="11" font-family="monospace">REAR WING</text>
+            <text x="290" y="100" fill="#FFD700" font-size="11" font-family="monospace">HALO</text>
+            <text x="482" y="215" fill="#888" font-size="11" font-family="monospace">DIFFUSER</text>
+            <text x="25" y="148" fill="#3671C6" font-size="11" font-family="monospace">AIRFLOW →</text>
+            <text x="275" y="250" fill="#888" font-size="11" font-family="monospace" text-anchor="middle">↓ DOWNFORCE (red arrows push car into track)</text>
+          </svg>
+          <p style="color:var(--text-dim);font-size:0.8rem;margin-top:0.5rem;">Simplified F1 car aerodynamic diagram — red arrows show downforce direction</p>
+        </div>
+      </div>
+
+      <div class="grid-2" style="gap:1.5rem;">
+        <div class="science-card">
+          <h3>🔴 Front Wing</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The front wing is the first aerodynamic element to meet incoming air. It generates roughly 25–30% of total car downforce while also shaping airflow to the rest of the car. Teams make up to 500 individual adjustments to a front wing design per season. A single element can have 50+ component pieces.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">~25% total downforce</span><span class="stat-chip">0–3° angle adjustable</span></div>
+        </div>
+        <div class="science-card">
+          <h3>⬇️ Floor & Ground Effect</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The underfloor generates the majority of downforce — up to 60% in modern cars — through ground effect. Air accelerates under the Venturi-shaped floor, creating a low-pressure zone that sucks the car toward the track. The 2022 regulations brought back proper ground effect floors after a 40-year absence.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">~60% total downforce</span><span class="stat-chip">5–10mm ride height</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🌀 Diffuser</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The diffuser at the rear of the car expands the airflow exiting the floor, slowing it down and recovering pressure. This allows the floor to create even lower pressure. It's one of the most sensitive aerodynamic components — small changes create large downforce shifts. The exhaust is often positioned to enhance diffuser performance.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">Rear underfloor</span><span class="stat-chip">Exhaust-blown effect</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🔵 Rear Wing</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The rear wing provides balance downforce and houses the DRS flap (or MOM system in 2026). Teams choose high-downforce or low-downforce specification rear wings depending on the circuit — Monaco gets maximum angle, Monza gets almost flat. The endplates shape vortices to improve efficiency.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">~15% total downforce</span><span class="stat-chip">Circuit-specific trim</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1.5rem;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">The Physics</div>
+        <h3 style="font-family:var(--font-mono);font-size:1rem;text-transform:uppercase;margin-bottom:1rem;">Downforce vs Drag</h3>
+        <p style="color:var(--text-dim);line-height:1.8;margin-bottom:1rem;">Every aerodynamic element is a compromise between downforce (grip) and drag (resistance). More downforce means more cornering speed but lower top speed. The aerodynamic efficiency ratio (L/D) defines how much downforce is generated per unit of drag.</p>
+        <div class="formula-box">Downforce = ½ × ρ × v² × Cd × A</div>
+        <p style="color:var(--text-dim);font-size:0.82rem;">Where ρ = air density, v = velocity, Cd = drag coefficient, A = reference area. At 200 km/h, downforce exceeds the car's own weight (~800kg).</p>
+      </div>
+    </div>
+
+    <!-- ═══ POWER UNIT ═══ -->
+    <div class="chapter" id="ch-pu">
+      <div class="card" style="margin-bottom:2rem;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Power Unit</div>
+        <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:1rem;">The 1000bhp Hybrid Machine</h2>
+        <p style="color:var(--text-dim);line-height:1.8;margin-bottom:1.5rem;">
+          An F1 power unit is six components in one: a 1.6-litre V6 turbocharged internal combustion engine, an electric motor-generator on the turbo shaft (MGU-H, removed in 2026), an electric motor-generator on the crankshaft (MGU-K), an Energy Store (battery), and a Control Electronics unit. Together they produce over 1,000bhp from an engine smaller than some road car engines.
+        </p>
+      </div>
+
+      <div class="grid-2" style="gap:1.5rem;margin-bottom:1.5rem;">
+        <div class="science-card">
+          <h3>🔥 ICE — Internal Combustion Engine</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The 1.6-litre V6 turbocharged engine revs to 15,000 RPM and produces around 550–600bhp on its own. It runs on E10 (10% sustainable ethanol) fuel at pressures of 500+ bar through direct injection. Thermal efficiency exceeds 50% — better than any road car engine — meaning over half the energy in the fuel becomes motion.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">1.6L V6</span><span class="stat-chip">15,000 RPM</span><span class="stat-chip">&gt;50% thermal efficiency</span></div>
+        </div>
+        <div class="science-card">
+          <h3>⚡ MGU-K — Kinetic Energy Recovery</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The MGU-K sits on the crankshaft and operates in two modes: harvesting (converting braking kinetic energy into electricity) and deploying (adding up to 120kW / 163bhp of extra power to the drivetrain). Drivers feel the MGU-K deployment as a surge of additional power, typically on corner exit.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">120kW / 163bhp</span><span class="stat-chip">Harvest + Deploy</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🔋 Energy Store</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The lithium-ion battery stores up to 4MJ of energy per lap for deployment. Teams manage energy like fuel — conserving it on straights to spend it at critical overtaking moments. The battery can charge and discharge simultaneously, creating complex energy flows that the driver and engineers manage in real time.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">4MJ capacity</span><span class="stat-chip">Li-ion cells</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🌀 Turbocharger</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The single turbo compresses air into the engine, dramatically increasing power density. F1 turbos spin at up to 125,000 RPM — so fast the shaft must be supported on oil film bearings. The 2026 regulations removed the MGU-H (heat recovery from exhaust gases) simplifying the system but requiring new energy management strategies.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">125,000 RPM</span><span class="stat-chip">MGU-H removed 2026</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Power Unit Specs — 2026 Regs</div>
+        <div class="spec-row"><div class="spec-label">Architecture</div><div class="spec-val">1.6-litre turbocharged V6, 90° bank angle</div></div>
+        <div class="spec-row"><div class="spec-label">Max RPM</div><div class="spec-val">15,000 RPM (power limited)</div></div>
+        <div class="spec-row"><div class="spec-label">ICE Power</div><div class="spec-val">~550–600 bhp (combustion only)</div></div>
+        <div class="spec-row"><div class="spec-label">Total System Power</div><div class="spec-val">&gt;1,000 bhp combined (ICE + ERS)</div></div>
+        <div class="spec-row"><div class="spec-label">Fuel</div><div class="spec-val">E10 sustainable blend (10% bioethanol) moving to 100% sustainable</div></div>
+        <div class="spec-row"><div class="spec-label">Fuel flow limit</div><div class="spec-val">100kg/hr maximum</div></div>
+        <div class="spec-row"><div class="spec-label">MGU-K output</div><div class="spec-val">120kW / ~163bhp</div></div>
+        <div class="spec-row"><div class="spec-label">Components allowed</div><div class="spec-val">4 ICE, 4 turbo, 4 MGU-K per season (penalties for exceeding)</div></div>
+        <div class="spec-row"><div class="spec-label">Manufacturers (2026)</div><div class="spec-val">Mercedes, Ferrari, Renault, Honda RBPT, Audi (new)</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ TYRES ═══ -->
+    <div class="chapter" id="ch-tyres">
+      <div class="card" style="margin-bottom:2rem;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Tyres</div>
+        <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:1rem;">The Only Contact with the Track</h2>
+        <p style="color:var(--text-dim);line-height:1.8;">
+          All 1,000+ horsepower, all cornering forces, all braking loads — everything passes through four contact patches the size of an A4 sheet of paper. Pirelli's tyres are one of the most technically complex parts of the sport, and managing them correctly is the difference between winning and finishing last.
+        </p>
+      </div>
+
+      <div class="grid-2" style="gap:1.5rem;margin-bottom:1.5rem;">
+        <div class="science-card">
+          <h3>🔴 Soft</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The softest compound — maximum grip, minimum durability. Typically used in qualifying and short stints. The rubber heats up fast, provides peak performance in 1–2 laps, but degrades rapidly. Strategic risk-reward: pit early for soft tyres and hope the track position holds.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip" style="background:rgba(232,0,45,0.2);">C4–C5 compounds</span><span class="stat-chip">10–20 laps</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🟡 Medium</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The compromise compound — used most often in races. Balances grip and longevity. The go-to one-stop strategy tyre. Pirelli's tyre selection varies per circuit: what is "Medium" in Monaco would be "Hard" at a smoother circuit. Compound allocation is circuit-specific.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip" style="background:rgba(255,242,0,0.15);color:#FFF200;">C3–C4 compounds</span><span class="stat-chip">20–35 laps</span></div>
+        </div>
+        <div class="science-card">
+          <h3>⚪ Hard</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The hardest compound — slowest but most durable. Teams who start on Hards aim to skip a pit stop entirely or run the longest stint. Slow to warm up (requires several laps to reach operating temperature), but once there, can run 40+ laps. Critical for undercut defences.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip" style="background:rgba(255,255,255,0.1);color:#ddd;">C1–C3 compounds</span><span class="stat-chip">35–50 laps</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🟢 Inters / 💙 Wets</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">Intermediates for damp/drying conditions, full wets for heavy rain. Wet tyres evacuate 65 litres of water per second at 300 km/h through their tread grooves. The call between intermediates and wets — or dry tyres — is one of the highest-stakes strategic decisions in the sport.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip" style="background:rgba(57,181,74,0.15);color:#39B54A;">65L/s water clearance</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Tyre Physics</div>
+        <p style="color:var(--text-dim);line-height:1.8;margin-bottom:1rem;">F1 tyres operate best within a narrow temperature window — typically 80°C to 110°C. Outside this range, performance drops sharply. Engineers monitor tyre temperatures via sensors in the wheel hub and model degradation in real time to predict pit windows. Lateral forces in corners can exceed 5G, compressing the tyre sidewall significantly.</p>
+        <div class="formula-box">Grip = μ × Normal Force · where μ varies with temp, wear & compound</div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
+          <div class="spec-row" style="flex:1;min-width:200px;"><div class="spec-label">Tyre diameter</div><div class="spec-val">18-inch (since 2022)</div></div>
+          <div class="spec-row" style="flex:1;min-width:200px;"><div class="spec-label">Tyre pressure</div><div class="spec-val">~21–25 psi (Pirelli mandated)</div></div>
+          <div class="spec-row" style="flex:1;min-width:200px;"><div class="spec-label">Operating temp</div><div class="spec-val">80°C – 110°C ideal window</div></div>
+          <div class="spec-row" style="flex:1;min-width:200px;"><div class="spec-label">Blanket temp</div><div class="spec-val">70°C pre-race warm-up</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ACTIVE AERO 2026 ═══ -->
+    <div class="chapter" id="ch-active">
+      <div class="card" style="margin-bottom:2rem;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">2026 Regulations</div>
+        <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:1rem;">⚡ Active Aerodynamics & MOM</h2>
+        <p style="color:var(--text-dim);line-height:1.8;">
+          The 2026 F1 regulations represent the most fundamental aerodynamic change since ground effect was banned in 1983. Fixed wings are gone. Instead, cars use fully active aerodynamic systems that change shape during the lap — more downforce in corners, less drag on straights. The Manual Override Mode (MOM) replaces DRS entirely.
+        </p>
+      </div>
+
+      <div class="science-card" style="border-left-color:#3671C6;">
+        <h3 style="color:#3671C6;">🔵 X-Mode (High Downforce)</h3>
+        <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">In cornering, the active aerodynamic system deploys to its maximum downforce configuration. Front and rear wings extend to their highest-downforce angle, and the floor seals more aggressively to the track surface. The car transitions into X-mode automatically below a speed threshold or when the driver activates braking. This is like having the best qualifying trim and race trim in a single lap.</p>
+        <div style="margin-top:0.75rem;"><span class="stat-chip" style="background:rgba(54,113,198,0.2);color:#3671C6;">High downforce</span><span class="stat-chip" style="background:rgba(54,113,198,0.2);color:#3671C6;">Cornering optimised</span></div>
+      </div>
+
+      <div class="science-card" style="border-left-color:#E8002D;">
+        <h3>🔴 MOM — Manual Override Mode (Z-Mode)</h3>
+        <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">On designated straights, when within 1 second of the car ahead (same proximity rule as DRS), drivers can activate Manual Override Mode. The active aerodynamic surfaces flatten to a low-drag configuration — front wing reduces angle, rear wing nearly flattens, floor relaxes. Speed gain is estimated at 10–15 km/h on the straight. Unlike DRS which only opened a single flap, MOM changes the entire aerodynamic character of the car.</p>
+        <div style="margin-top:0.75rem;"><span class="stat-chip">Within 1s of car ahead</span><span class="stat-chip">~10–15 km/h gain</span><span class="stat-chip">Designated zones only</span></div>
+      </div>
+
+      <div class="card">
+        <div class="section-tag" style="margin-bottom:0.75rem;">2026 Regs Timeline</div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-year">2022</div><div>Ground effect floors return. Simplified wings. 18-inch tyres introduced.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2023</div><div>Refined floor rules to reduce porpoising. Teams iterate on Venturi tunnels.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2025</div><div>Final season under 2022-based regulations. MGU-H last used in competition.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2026</div><div>New power unit regs (MGU-H removed, more MGU-K power). Active aerodynamics. MOM replaces DRS. New sustainable fuel mandate. Major constructor shake-up — Audi enters.</div></div>
+          <div class="timeline-item"><div class="timeline-year">2030+</div><div>100% sustainable fuel target. Further ERS power increase planned. FIA sustainability roadmap continues.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CHASSIS & SAFETY ═══ -->
+    <div class="chapter" id="ch-chassis">
+      <div class="card" style="margin-bottom:2rem;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Chassis & Safety</div>
+        <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:1rem;">Built to Crash, Built to Survive</h2>
+        <p style="color:var(--text-dim);line-height:1.8;">F1 cars are engineered as survival cells. The monocoque chassis — made from carbon fibre — must pass crash tests that simulate 25G+ impacts. The introduction of the Halo in 2018 changed driver safety fundamentally. These are some of the safest racing vehicles ever built.</p>
+      </div>
+      <div class="grid-2" style="gap:1.5rem;margin-bottom:1.5rem;">
+        <div class="science-card">
+          <h3>🛡️ Carbon Fibre Monocoque</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The central survival cell is made from aerospace-grade carbon fibre composite — stronger than steel at a fraction of the weight. The monocoque is designed to be the last thing that deforms in a crash. Multiple crash tests (frontal, side, rear) must pass FIA standards before the car is allowed to race. Over 10,000 plies of carbon fibre may go into a single chassis.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">Carbon fibre composite</span><span class="stat-chip">25G+ impact rating</span></div>
+        </div>
+        <div class="science-card">
+          <h3>⭕ The Halo</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">Introduced in 2018 after years of resistance from fans and drivers, the Halo titanium structure has since saved multiple lives — most notably Romain Grosjean at Bahrain 2020 and Zhou Guanyu at Silverstone 2022. It can withstand the equivalent of a double-decker bus sitting on it. Arguably the single most important safety innovation in F1 history.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">Titanium alloy</span><span class="stat-chip">~12 tonnes crush load</span></div>
+        </div>
+        <div class="science-card">
+          <h3>💥 Crash Structures</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">Front, rear and side impact structures are designed to crumple in a controlled way — absorbing crash energy gradually rather than transferring it to the driver. The nose cone alone must absorb 60kJ of energy. Tyre barriers (SAFER barriers, Tecpro) around circuits work in conjunction with the car's own structures.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">60kJ nose absorption</span><span class="stat-chip">Controlled deformation</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🪑 HANS Device & Seat</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">The HANS (Head And Neck Support) device prevents the head from snapping forward in high-speed frontal impacts. The custom-moulded seat fits each driver precisely — scanned from body impressions in foam. Six-point harnesses keep the driver firmly in position at all times, including during barrel roll accidents.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">Custom moulded seat</span><span class="stat-chip">6-point harness</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DATA & SENSORS ═══ -->
+    <div class="chapter" id="ch-data">
+      <div class="card" style="margin-bottom:2rem;">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Data & Sensors</div>
+        <h2 style="font-family:var(--font-mono);font-size:1.5rem;margin-bottom:1rem;">300+ Sensors. 1,500 Data Points Per Second.</h2>
+        <p style="color:var(--text-dim);line-height:1.8;">A modern F1 car generates more data per lap than most entire sporting events. Over 300 sensors monitor every aspect of the car — from brake temperature to suspension deflection to fuel mass flow. All of this is transmitted live to the pit wall and back to the factory, where hundreds of engineers analyse it in real time.</p>
+      </div>
+      <div class="grid-2" style="gap:1.5rem;margin-bottom:1.5rem;">
+        <div class="science-card">
+          <h3>📡 Telemetry System</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">Up to 1,500 data channels transmit live from the car to the pit wall at up to 10Mbit/s. Engineers monitor brake temperatures, tyre pressures, fuel burn rate, suspension travel, differential settings, ERS state of charge, and dozens of other parameters simultaneously. The FIA also receives a mandated subset of data to police technical regulations.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">1,500 channels</span><span class="stat-chip">10Mbit/s live</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🔢 Mini-Sectors</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">Official F1 timing divides each lap into three sectors, but team systems break each lap into hundreds of micro-segments. Engineers compare each mini-sector against reference laps to identify exactly where performance is being lost — a specific corner, a braking point, a kerb. A 0.003s loss in a single mini-sector might trigger a set-up change.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">Sub-second precision</span><span class="stat-chip">Corner-by-corner analysis</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🧠 Simulation & CFD</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">Computational Fluid Dynamics (CFD) simulates aerodynamic behaviour before parts are manufactured. Each team is allocated a fixed amount of CFD computing time per week under the regulations. Combined with 7-post rig testing (simulating track surfaces on the car body), teams can develop cars without physically testing on track.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">CFD allocation limits</span><span class="stat-chip">7-post rig testing</span></div>
+        </div>
+        <div class="science-card">
+          <h3>🏎️ Driver-in-the-Loop Sim</h3>
+          <p style="color:var(--text-dim);line-height:1.7;font-size:0.9rem;">Full-motion driving simulators allow drivers and engineers to test setup changes, race strategies, and new car concepts without using track time. The sim uses real track laser scan data and replays actual tyre models. Some teams run their simulator 24/7 during race weekends, feeding real circuit data back to the factory instantly.</p>
+          <div style="margin-top:0.75rem;"><span class="stat-chip">Real laser-scan tracks</span><span class="stat-chip">24/7 operation</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-tag" style="margin-bottom:0.75rem;">Key Numbers</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">
+          <div style="text-align:center;padding:1rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border);">
+            <div style="font-family:var(--font-mono);font-size:2rem;font-weight:900;color:var(--red);">300+</div>
+            <div style="font-size:0.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:0.25rem;">Sensors per car</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border);">
+            <div style="font-family:var(--font-mono);font-size:2rem;font-weight:900;color:var(--red);">1,500</div>
+            <div style="font-size:0.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:0.25rem;">Data channels live</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border);">
+            <div style="font-family:var(--font-mono);font-size:2rem;font-weight:900;color:var(--red);">100GB+</div>
+            <div style="font-size:0.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:0.25rem;">Data per race weekend</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border);">
+            <div style="font-family:var(--font-mono);font-size:2rem;font-weight:900;color:var(--red);">500+</div>
+            <div style="font-size:0.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:0.25rem;">Factory engineers per race</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sid quote -->
+    <div class="card" style="margin-top:2rem;border-left:4px solid var(--red);background:rgba(232,0,45,0.05);">
+      <div style="display:flex;gap:1rem;align-items:flex-start;">
+        <div style="font-size:2rem;flex-shrink:0;">🦥</div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;">Sid's Engineering Take</div>
+          <div style="font-size:0.95rem;line-height:1.6;">"I survived the ice age with nothing but instinct and an unreliable mammoth. These engineers have 300 sensors, 500 support staff, and a supercomputer. And somehow we both end up at the finish line. Respect to the process."</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & FastF1.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">engineered in the slow lane · @ratatoolie</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><img src="../assets/img/sid.png" alt="Sid" onerror="this.parentElement.innerHTML='<div class=fallback>🦥</div>'" /></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Engineering mode</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">Ask me anything about F1 engineering! I've been studying it intensively since the ice age. ⚙️🦥</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid…" />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle">
+    <img src="../assets/img/sid.png" alt="Sid" onerror="this.outerHTML='<span class=fallback-face>🦥</span>'" />
+  </button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+function showChapter(id) {
+  document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('ch-' + id).classList.add('active');
+  event.target.classList.add('active');
+  document.getElementById('ch-' + id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>

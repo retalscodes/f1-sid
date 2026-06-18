@@ -180,6 +180,15 @@ const API = {
     body: JSON.stringify({ term, definition }),
   }),
 
+  // Analytics (FastF1-backed)
+  getAnalyticsRounds: (year) => apiFetch(`/analytics/rounds/${year}`),
+  getLapComparison: (year, round, d1, d2) => apiFetch(`/analytics/lap-comparison/${year}/${round}?d1=${d1}&d2=${d2}`),
+  getTireStrategy: (year, round) => apiFetch(`/analytics/tire-strategy/${year}/${round}`),
+  getQualiComparison: (year, round, d1, d2) => apiFetch(`/analytics/quali-comparison/${year}/${round}?d1=${d1}&d2=${d2}`),
+  getSeasonDuel: (year, d1, d2) => apiFetch(`/analytics/season-duel/${year}/${d1}/${d2}`),
+  getDriverForm: (id) => apiFetch(`/analytics/driver-form/${id}`),
+  getRacePredictor: (year, round) => apiFetch(`/analytics/predict/${year}/${round}`),
+
   // Predictions
   createRoom: (data) => apiFetch('/predictions/room', {
     method: 'POST',

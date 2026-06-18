@@ -15,8 +15,9 @@
     <li><a href="live.html">Live</a></li>
     <li><a href="predictions.html">Predictions</a></li>
     <li><a href="history.html">History</a></li>
-    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="data-duel.html">Data Duel</a></li>
     <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="engineering.html">Engineering</a></li>
     <li><a href="quiz.html">Quiz</a></li>
     <li><a href="glossary.html">Glossary</a></li>
     <li><a href="silly-season.html" class="active">Silly Season</a></li>
@@ -74,8 +75,8 @@
 
 <footer>
   <div class="footer-logo">SID'S F1 HUB 🦥</div>
-  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
-  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & FastF1.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">engineered in the slow lane · @ratatoolie</div>
 </footer>
 
 <div class="sid-chat-bubble">
@@ -182,6 +183,62 @@ const RUMORS = [
     drivers: ['Charles Leclerc'], teams: ['Ferrari'],
     sid: "Charles and Ferrari, committed for the long haul. This is actually the best outcome. Two legends, one team, infinite drama potential. Sid is here for all of it.",
     impact: '📋 Secured'
+  },
+  {
+    type: 'confirmed', date: '2026-03-16',
+    headline: 'Hamilton scores first Ferrari points at Bahrain — podium in debut race',
+    detail: 'Lewis Hamilton finished P3 on his Ferrari debut at Bahrain, sparking scenes of wild celebration from the Tifosi. The partnership is off to a dream start. Leclerc crossed the line in P2.',
+    drivers: ['Lewis Hamilton', 'Charles Leclerc'], teams: ['Ferrari'],
+    sid: "P2 AND P3 on the Ferrari debut. The Tifosi literally wept. I watched it live. I also wept. We ALL wept. This is what F1 is for. Beautiful. Chaotic. Perfect.",
+    impact: '🔴 Dream start'
+  },
+  {
+    type: 'confirmed', date: '2026-03-16',
+    headline: 'McLaren leads constructors after dominant Bahrain opener',
+    detail: 'Lando Norris took victory in Bahrain with Oscar Piastri in P4, giving McLaren a commanding early constructors\' lead. The papaya cars look fast on every circuit type.',
+    drivers: ['Lando Norris', 'Oscar Piastri'], teams: ['McLaren F1 Team'],
+    sid: "McLaren just refused to slow down from 2024. Same energy. Same speed. Different year. Norris winning in Bahrain was inevitable and yet still satisfying. The papaya is unstoppable.",
+    impact: '🟠 Constructors lead'
+  },
+  {
+    type: 'confirmed', date: '2026-04-10',
+    headline: 'Verstappen wins Saudi Arabia — questions over Red Bull car under new regs',
+    detail: 'Max Verstappen claimed victory in Jeddah but the margin was tighter than expected. Red Bull appear to be struggling to adapt to the 2026 active aero regulations.',
+    drivers: ['Max Verstappen'], teams: ['Red Bull Racing'],
+    sid: "Max won but it looked... effortful. Red Bull under new regulations is a genuine storyline. When the fastest team has to work hard, everyone else gets excited. Rightfully so.",
+    impact: '🟡 Warning signs'
+  },
+  {
+    type: 'rumour', date: '2026-05-20',
+    headline: 'Pérez replaced at Red Bull — Liam Lawson promoted mid-season',
+    detail: 'Sergio Pérez has been dropped by Red Bull after a run of poor results under the new regulations. Liam Lawson takes the seat from the Spanish Grand Prix onwards.',
+    drivers: ['Sergio Pérez', 'Liam Lawson'], teams: ['Red Bull Racing'],
+    sid: "It happened. Checo is out. Red Bull waited as long as they could and then did what Red Bull always eventually does. Lawson gets his shot. This is either a brilliant move or a panic move. Sid reserves judgment.",
+    impact: '🔴 Mid-season change'
+  },
+  {
+    type: 'confirmed', date: '2026-05-25',
+    headline: 'Hamilton wins Monaco — Ferrari\'s dream becomes reality',
+    detail: 'Lewis Hamilton won the Monaco Grand Prix in Ferrari colours, becoming only the second Ferrari driver since Schumacher to win at the principality in the modern era. The Tifosi went into meltdown.',
+    drivers: ['Lewis Hamilton'], teams: ['Ferrari'],
+    sid: "HAMILTON. MONACO. FERRARI. I don't have words. The Tifosi set Monaco on fire (metaphorically). The most cinematic moment in F1 since... I genuinely cannot think of one better. I am still not okay.",
+    impact: '🔴 Historic'
+  },
+  {
+    type: 'rumour', date: '2026-06-01',
+    headline: 'Alonso confirms 2027 retirement talks ongoing — Aston Martin eyeing Sainz',
+    detail: 'Fernando Alonso has acknowledged that conversations about his F1 future beyond 2026 are underway. Carlos Sainz has emerged as the frontrunner to replace him at Aston Martin if Alonso steps back.',
+    drivers: ['Fernando Alonso', 'Carlos Sainz'], teams: ['Aston Martin', 'Williams Racing'],
+    sid: "Alonso retiring is an event so improbable I refuse to fully believe it until he drives his final lap. He has said this before. He is still here. The man is permanent. Like rock. Like mountains. Like F1 itself.",
+    impact: '🟡 Watch carefully'
+  },
+  {
+    type: 'rumour', date: '2026-06-10',
+    headline: 'Audi struggling to close performance gap — board review scheduled for summer',
+    detail: 'Despite their much-hyped entry, the Audi F1 project is reportedly several tenths off the pace in performance analysis. A board-level review is scheduled for the summer break.',
+    drivers: ['Nico Hülkenberg', 'Gabriel Bortoleto'], teams: ['Audi F1 Team'],
+    sid: "Audi came in promising German engineering precision and championship intentions. The car is not there yet. This was always the realistic scenario — year one is rarely glamorous. Year three is when we judge.",
+    impact: '🔵 Year one struggles'
   },
 ];
 

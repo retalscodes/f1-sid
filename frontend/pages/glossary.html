@@ -15,11 +15,13 @@
     <li><a href="live.html">Live</a></li>
     <li><a href="predictions.html">Predictions</a></li>
     <li><a href="history.html">History</a></li>
-    <li><a href="head-to-head.html">H2H</a></li>
+    <li><a href="data-duel.html">Data Duel</a></li>
     <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="engineering.html">Engineering</a></li>
     <li><a href="quiz.html">Quiz</a></li>
     <li><a href="glossary.html" class="active">Glossary</a></li>
     <li><a href="silly-season.html">Silly Season</a></li>
+    <li><a href="media.html">Media</a></li>
   </ul>
   <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
 </nav>
@@ -61,8 +63,8 @@
 
 <footer>
   <div class="footer-logo">SID'S F1 HUB 🦥</div>
-  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & pure sloth energy.</div>
-  <div style="margin-top:0.5rem;opacity:0.5;">© 2026 @retalscodes · Data: OpenF1 API · Jolpica/Ergast API · Open-Meteo</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & FastF1.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">engineered in the slow lane · @ratatoolie</div>
 </footer>
 
 <div class="sid-chat-bubble">
@@ -117,6 +119,14 @@ const GLOSSARY = [
   { term: 'Fastest Lap', cat: 'race', def: 'The single quickest lap set by any driver during the race. Since 2019, the driver who sets the fastest lap (if in top 10) earns a bonus championship point.', sid: "One extra point for going fast ONE lap. Teams will pit their driver at the end of the race JUST for this. One point! I would definitely risk my life for one extra point. YEAHHH BUDDY! 🦥⚡" },
   { term: 'Slipstream', cat: 'race', def: 'The area of reduced air resistance directly behind a fast-moving car. Following in another car\'s slipstream allows higher top speeds on straights.', sid: "Slipstream is the F1 version of drafting behind a big mammoth. Less air resistance, more speed. I used to do this with Diego. He was not always happy about it. 🦥" },
   { term: 'Grid Penalty', cat: 'rules', def: 'A punishment that drops a driver back positions on the starting grid, usually for engine component changes beyond the allowance, causing incidents, or impeding other drivers.', sid: "Grid penalties are F1\'s way of saying 'bad boy, go to the back.' Teams take them strategically sometimes — change the engine in Belgium, start at the back, and... still podium. Modern F1 is confusing. 🦥" },
+  { term: 'MOM', cat: 'tech', def: 'Manual Override Mode — the 2026 replacement for DRS. With active aerodynamics introduced under new regulations, drivers can manually override the aero system on designated straights to reduce drag, just like DRS but built into the moving wing architecture rather than a separate flap.', sid: "They replaced DRS with MOM. I cannot stop laughing. MOM activates on the straight, reduces drag, and helps overtaking — just like DRS but with a much better acronym. The engineers knew exactly what they were doing. 🦥" },
+  { term: 'Active Aerodynamics', cat: 'tech', def: 'The 2026 F1 regulation concept allowing wings to physically change shape during a lap — high-downforce mode in corners (X-mode) and low-drag mode on straights. This replaced the fixed-wing DRS system entirely.', sid: "Wings that MOVE and CHANGE SHAPE during the lap. Not a flap — the whole wing morphs. This is science fiction that became Formula 1. I was already impressed by winglets. Now this. 🦥" },
+  { term: 'Cost Cap', cat: 'rules', def: 'A budget restriction introduced in 2021 limiting what F1 teams can spend on car development and operations per season. Teams that exceed the cap face penalties ranging from fines to championship point deductions.', sid: "F1 finally said 'okay maybe spending unlimited money is too much.' The cost cap is meant to level the playing field. Rich teams had feelings about this. The feelings were not positive. 🦥" },
+  { term: 'E10 Fuel', cat: 'tech', def: 'The sustainable fuel blend mandated from 2022 — 10% bioethanol mixed with fossil fuel. The 2026 regulations push towards 100% sustainable fuel, making F1 part of the green energy transition.', sid: "They put ethanol in the fuel! 10% sustainable ingredients in every F1 car. By 2026 they want 100% sustainable. The cars will technically be running on plants. Plants going 340 km/h. Wild. 🦥" },
+  { term: 'Track Limits', cat: 'rules', def: 'The white lines defining the edge of the racing surface. Drivers must keep at least one tyre within these lines. Lap times set while exceeding track limits are deleted. One of F1\'s most debated ruleset in recent years.', sid: "Track limits! You must stay within the white lines OR ELSE your lap time gets deleted. Drivers push as far as they can. Stewards watch every frame. Fans argue online for days. F1 in 2025. 🦥" },
+  { term: 'Overcut', cat: 'strategy', def: 'Staying out longer than the car you are fighting, building a gap while they pit on fresh tyres, then pitting yourself and hopefully emerging ahead when they struggle to warm up tyres or get caught in traffic.', sid: "The overcut is high-risk sophistication. Stay out, build the gap, pray they get held up in the pits, emerge ahead. When it works it looks like genius. When it fails it looks like stubbornness. Fine line. 🦥" },
+  { term: 'Mini-Sector', cat: 'tech', def: 'F1 timing systems divide each lap into dozens of small segments called mini-sectors. Teams use these to pinpoint exactly where performance is gained or lost, down to specific corners or braking zones.', sid: "Engineers cut every lap into tiny pieces and measure each one. Not just three sectors — DOZENS. They know exactly which corner cost you 0.003 seconds. I cannot process this level of detail. Respect. 🦥" },
+  { term: 'Box Box Box', cat: 'race', def: 'Radio instruction from the pit wall to the driver to come in for a pit stop. Said three times for clarity over radio noise. One of the most recognisable phrases in F1.', sid: "'BOX BOX BOX' on the radio means come in NOW. It sounds urgent because it IS urgent. Strategies live and die in the moment the driver turns into the pit lane. Three words. Everything at stake. 🦥" },
 ];
 
 let activeCategory = 'all';

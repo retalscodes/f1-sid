@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Media — SID'S F1 HUB</title>
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦥</text></svg>" />
+  <style>
+    .media-hero {
+      background: linear-gradient(135deg, rgba(54,113,198,0.15), transparent 60%), var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem;
+    }
+    .filter-bar {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .filter-btn {
+      padding: 0.45rem 1rem; border-radius: 20px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-dim); font-family: var(--font-mono);
+      font-size: 0.72rem; font-weight: 700; cursor: pointer; letter-spacing: 1px;
+      text-transform: uppercase; transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+    .media-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;
+    }
+    .media-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; transition: transform 0.2s, border-color 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .media-card:hover { transform: translateY(-3px); border-color: var(--red); }
+    .media-thumb {
+      height: 160px; display: flex; align-items: center; justify-content: center;
+      font-size: 4rem; position: relative; overflow: hidden;
+    }
+    .media-badge {
+      position: absolute; top: 0.75rem; right: 0.75rem;
+      background: rgba(0,0,0,0.7); color: #fff; font-family: var(--font-mono);
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      padding: 0.25rem 0.6rem; border-radius: 4px;
+    }
+    .sid-pick {
+      position: absolute; top: 0.75rem; left: 0.75rem;
+      background: var(--red); color: #fff; font-family: var(--font-mono);
+      font-size: 0.65rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 4px;
+      letter-spacing: 1px;
+    }
+    .media-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .media-title { font-family: var(--font-mono); font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .media-meta { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.75rem; font-family: var(--font-mono); }
+    .media-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; flex: 1; }
+    .media-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 1rem; }
+    .tag {
+      font-size: 0.65rem; font-family: var(--font-mono); font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 0.2rem 0.5rem; border-radius: 3px;
+      background: rgba(255,255,255,0.06); color: var(--text-dim);
+    }
+    .stars { color: #FFF200; letter-spacing: 1px; }
+    .hidden { display: none !important; }
+    .section-head {
+      font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--red); margin: 2.5rem 0 1rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-head::after { content:''; flex:1; height:1px; background:var(--border); }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo"><div class="sid-icon-fallback">🦥</div>SID'S F1 HUB</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="live.html">Live</a></li>
+    <li><a href="predictions.html">Predictions</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="data-duel.html">Data Duel</a></li>
+    <li><a href="circuit.html">Circuits</a></li>
+    <li><a href="engineering.html">Engineering</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="glossary.html">Glossary</a></li>
+    <li><a href="silly-season.html">Silly Season</a></li>
+    <li><a href="media.html" class="active">Media</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger"><span></span><span></span><span></span></button>
+</nav>
+
+<div style="padding-top:64px;">
+  <div class="media-hero">
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="section-tag">Media Room</div>
+      <h1 class="section-title" style="font-size:2.5rem;margin-bottom:0.75rem;">🎬 F1 For Every Mood</h1>
+      <p style="color:var(--text-dim);max-width:600px;">
+        Whether you've watched every race since 1950 or just discovered F1 through Netflix, here's the definitive list of what to watch, read, and listen to. Sid-approved (and Sid is very picky).
+      </p>
+    </div>
+  </div>
+
+  <div class="section" style="max-width:1100px;">
+
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="series">📺 Series</button>
+      <button class="filter-btn" data-filter="film">🎞️ Film</button>
+      <button class="filter-btn" data-filter="documentary">🎙️ Documentary</button>
+      <button class="filter-btn" data-filter="book">📚 Book</button>
+      <button class="filter-btn" data-filter="podcast">🎧 Podcast</button>
+    </div>
+
+    <!-- ═══ SERIES ═══ -->
+    <div class="section-head">📺 Series</div>
+    <div class="media-grid">
+
+      <div class="media-card" data-type="series">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#e50914,#141414);">
+          🏎️
+          <span class="media-badge">Series</span>
+          <span class="sid-pick">🦥 Sid's Pick</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Drive to Survive</div>
+          <div class="media-meta">Netflix · 2019–present · 6 seasons</div>
+          <div class="media-desc">The show that turned F1 from a niche sport into a global cultural moment. Behind-the-scenes access, genuine drama, and enough driver feuds to fuel a year of arguments. Some liberties with the narrative — veteran fans will notice — but for accessibility? Unbeatable.</div>
+          <div class="media-tags">
+            <span class="tag">Netflix</span><span class="tag">Beginner-friendly</span><span class="tag">Drama</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="series">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+          📊
+          <span class="media-badge">Series</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">F1: Beyond the Grid</div>
+          <div class="media-meta">Formula 1 YouTube · 2023–2024</div>
+          <div class="media-desc">Not a show but a YouTube series — short-form in-depth dives into individual race weekends, technical rule changes, and team profiles. Excellent for bridging the gap between watching races and actually understanding them. The tyre degradation episodes alone are worth it.</div>
+          <div class="media-tags">
+            <span class="tag">YouTube</span><span class="tag">Technical</span><span class="tag">Free</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="series">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);">
+          🔧
+          <span class="media-badge">Series</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">The Grand Prix</div>
+          <div class="media-meta">Netflix · 2024</div>
+          <div class="media-desc">Netflix's follow-up series focusing specifically on the technical side of F1 — factory visits, wind tunnel sessions, and engineering decisions. More granular than Drive to Survive; recommended for anyone who wants to understand why teams are fast or slow, not just who's feuding.</div>
+          <div class="media-tags">
+            <span class="tag">Netflix</span><span class="tag">Engineering focus</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ FILMS ═══ -->
+    <div class="section-head">🎞️ Films</div>
+    <div class="media-grid">
+
+      <div class="media-card" data-type="film">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#740000,#200000);">
+          🏆
+          <span class="media-badge">Film</span>
+          <span class="sid-pick">🦥 Sid's Pick</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Rush</div>
+          <div class="media-meta">2013 · Ron Howard · Chris Hemsworth, Daniel Brühl</div>
+          <div class="media-desc">The 1976 championship battle between James Hunt and Niki Lauda — two polar opposites who pushed each other to the edge. Arguably the best motorsport film ever made. Lauda's return at Monza after his Nürburgring accident is one of the most remarkable stories in all of sport, and Howard does it full justice.</div>
+          <div class="media-tags">
+            <span class="tag">Historical</span><span class="tag">Drama</span><span class="tag">1976 season</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="film">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a1a00,#3d3d00);">
+          🎬
+          <span class="media-badge">Film</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">F1 (2025)</div>
+          <div class="media-meta">2025 · Joseph Kosinski · Brad Pitt, Damson Idris</div>
+          <div class="media-desc">The first major Hollywood production filmed at actual Grand Prix events with full FIA cooperation. A veteran driver returns to F1 to mentor a young teammate. Shot during real 2023/2024 race weekends, so the crowd, atmosphere, and paddock are genuine. More spectacle than substance, but visually stunning.</div>
+          <div class="media-tags">
+            <span class="tag">2025</span><span class="tag">Hollywood</span><span class="tag">Filmed at real GPs</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="film">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1c1c1c,#444);">
+          🇩🇪
+          <span class="media-badge">Film</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Grand Prix</div>
+          <div class="media-meta">1966 · John Frankenheimer · James Garner</div>
+          <div class="media-desc">The original F1 blockbuster — filmed at real 1966 circuits and races. The racing footage is incredible for the era. Technically dated now but historically essential; watch it and appreciate how absurdly dangerous the sport was before safety became a priority.</div>
+          <div class="media-tags">
+            <span class="tag">Classic</span><span class="tag">1966 season</span><span class="tag">Historic</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="film">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#001a33,#003366);">
+          🇫🇷
+          <span class="media-badge">Film</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Le Mans '66</div>
+          <div class="media-meta">2019 · James Mangold · Matt Damon, Christian Bale</div>
+          <div class="media-desc">Not strictly F1 — it's about the 1966 24 Hours of Le Mans and Ford vs Ferrari. But the spirit is identical: the limits of engineering, the tension between drivers and management, and what it means to go fast. Bale as Ken Miles is one of cinema's best racing portrayals.</div>
+          <div class="media-tags">
+            <span class="tag">Le Mans</span><span class="tag">Engineering story</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★★</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ DOCUMENTARIES ═══ -->
+    <div class="section-head">🎙️ Documentaries</div>
+    <div class="media-grid">
+
+      <div class="media-card" data-type="documentary">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#0d0d0d,#1a0a00);">
+          🇧🇷
+          <span class="media-badge">Documentary</span>
+          <span class="sid-pick">🦥 Sid's Pick</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Senna</div>
+          <div class="media-meta">2010 · Asif Kapadia · Ayrton Senna</div>
+          <div class="media-desc">Widely considered the greatest sports documentary ever made. Built entirely from archive footage — no talking heads — it puts you inside Senna's world. His genius, his spirituality, his rivalry with Prost, his death at Imola. Devastating and beautiful. Watch it even if you know nothing about F1.</div>
+          <div class="media-tags">
+            <span class="tag">Essential</span><span class="tag">Ayrton Senna</span><span class="tag">Archive footage</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="documentary">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#003300,#001a00);">
+          🇩🇪
+          <span class="media-badge">Documentary</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Schumacher</div>
+          <div class="media-meta">Netflix · 2021 · Michael Schumacher</div>
+          <div class="media-desc">An intimate look at the seven-time world champion — interviews with family, teammates, and rivals. Made with the support of his family and largely shaped around love. Respectful of his post-2013 condition without exploiting it. A portrait of the most dominant driver the sport has ever seen.</div>
+          <div class="media-tags">
+            <span class="tag">Netflix</span><span class="tag">Michael Schumacher</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="documentary">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a0020,#0d0010);">
+          🏁
+          <span class="media-badge">Documentary</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">1: Life on the Limit</div>
+          <div class="media-meta">2013 · Paul Crowder</div>
+          <div class="media-desc">Covers the entire history of Formula 1 from a safety perspective — from the deadly 1950s and 60s through the Lauda accident to modern crash survival. Narrated with archival footage and interviews with drivers across eras. Essential context for why modern F1 safety feels almost miraculous.</div>
+          <div class="media-tags">
+            <span class="tag">History</span><span class="tag">Safety</span><span class="tag">Full archive</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="documentary">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#001533,#000d1a);">
+          🔵
+          <span class="media-badge">Documentary</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">McLaren</div>
+          <div class="media-meta">2017 · Roger Donaldson · Bruce McLaren</div>
+          <div class="media-desc">The story of Bruce McLaren — New Zealand engineer and driver who built one of the most successful teams in motorsport history, and died testing his own car at 32. A story about obsession, talent, and the cost of chasing perfection. Heartbreaking in the best way.</div>
+          <div class="media-tags">
+            <span class="tag">Bruce McLaren</span><span class="tag">Team history</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ BOOKS ═══ -->
+    <div class="section-head">📚 Books</div>
+    <div class="media-grid">
+
+      <div class="media-card" data-type="book">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a1200,#3d2b00);">
+          📖
+          <span class="media-badge">Book</span>
+          <span class="sid-pick">🦥 Sid's Pick</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">How to Build a Car</div>
+          <div class="media-meta">2017 · Adrian Newey</div>
+          <div class="media-desc">Adrian Newey — the greatest F1 designer in history — walks through his entire career car by car. Part autobiography, part engineering textbook. His descriptions of how he thinks about airflow and downforce are genuinely illuminating. Essential for anyone interested in the technical side of the sport.</div>
+          <div class="media-tags">
+            <span class="tag">Engineering</span><span class="tag">Adrian Newey</span><span class="tag">Autobiography</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="book">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#00001a,#000033);">
+          📗
+          <span class="media-badge">Book</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">No Filters: My Life in F1</div>
+          <div class="media-meta">2023 · Christian Horner</div>
+          <div class="media-desc">Red Bull's team principal details the journey from mid-field team to dynasty — Vettel's four championships, the Hamilton rivalry, Verstappen era. Candid about the internal battles and boardroom politics. Take it with the self-serving bias of any team principal memoir, but the behind-the-scenes detail is excellent.</div>
+          <div class="media-tags">
+            <span class="tag">Team principal</span><span class="tag">Red Bull</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="book">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a0000,#330000);">
+          📕
+          <span class="media-badge">Book</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Total Competition</div>
+          <div class="media-meta">2016 · Ross Brawn & Adam Parr</div>
+          <div class="media-desc">Ross Brawn — the strategist behind Schumacher's seven championships and the 2009 Brawn GP fairytale — lays out his complete philosophy on building a winning team. Part strategy guide, part F1 history, part management theory. One of the most intelligent books written about the sport.</div>
+          <div class="media-tags">
+            <span class="tag">Strategy</span><span class="tag">Ross Brawn</span><span class="tag">Management</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="book">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#001a1a,#002626);">
+          📘
+          <span class="media-badge">Book</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">The Mechanic</div>
+          <div class="media-meta">2021 · Marc 'Elvis' Priestly</div>
+          <div class="media-desc">A former McLaren mechanic writes about life inside the factory and paddock — the pitstop choreography, the team culture, the pressure of sub-2-second tire changes. Accessible for non-technical readers. Brings the human side of the thousands of people who never appear on camera but make the cars go fast.</div>
+          <div class="media-tags">
+            <span class="tag">Behind the scenes</span><span class="tag">McLaren</span><span class="tag">Pitstop crew</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ PODCASTS ═══ -->
+    <div class="section-head">🎧 Podcasts</div>
+    <div class="media-grid">
+
+      <div class="media-card" data-type="podcast">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a001a,#2d002d);">
+          🎙️
+          <span class="media-badge">Podcast</span>
+          <span class="sid-pick">🦥 Sid's Pick</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">Beyond the Grid</div>
+          <div class="media-meta">Formula 1 · Weekly · Tom Clarkson</div>
+          <div class="media-desc">The official F1 podcast hosted by veteran journalist Tom Clarkson. Long-form interviews with drivers, team principals, engineers, and legends of the sport. Access is unmatched — guests speak more candidly here than almost anywhere else. The Lando Norris episode is a standout.</div>
+          <div class="media-tags">
+            <span class="tag">Official F1</span><span class="tag">Interviews</span><span class="tag">Weekly</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="podcast">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#001a33,#00264d);">
+          📻
+          <span class="media-badge">Podcast</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">The Race F1 Podcast</div>
+          <div class="media-meta">The Race · Weekly · Various</div>
+          <div class="media-desc">Sharp analysis from experienced journalists. Less access than Beyond the Grid but often more honest about what's actually happening — politics, technical controversies, steward decisions. Good for race weekend breakdowns if you want more depth than the TV broadcast provides.</div>
+          <div class="media-tags">
+            <span class="tag">Analysis</span><span class="tag">Technical</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+      <div class="media-card" data-type="podcast">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a0a00,#331400);">
+          🎤
+          <span class="media-badge">Podcast</span>
+        </div>
+        <div class="media-body">
+          <div class="media-title">F1 Nation</div>
+          <div class="media-meta">Formula 1 · Race weekend · Tom Clarkson & Damon Hill</div>
+          <div class="media-desc">A more casual, fan-oriented pod featuring a world champion (Hill) discussing the race weekend. Great tone for casual listening — less analytical, more conversational. Damon's insights about the driver's perspective are always worth hearing.</div>
+          <div class="media-tags">
+            <span class="tag">Official F1</span><span class="tag">Casual</span><span class="tag">Damon Hill</span>
+          </div>
+          <div class="stars" style="margin-top:0.75rem;">★★★★☆</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sid's note -->
+    <div class="card" style="margin-top:2rem;border-left:4px solid var(--red);background:rgba(232,0,45,0.05);">
+      <div style="display:flex;gap:1rem;align-items:flex-start;">
+        <div style="font-size:2rem;flex-shrink:0;">🦥</div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;">Sid's Final Word</div>
+          <div style="font-size:0.95rem;line-height:1.6;">"I've been slowly making my way through this list since 2013. I'm up to Schumacher now. No rush — we sloths are built for the long game. Start with Senna. Work your way up. By the time you're done, you'll understand everything worth knowing about this sport."</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">SID'S F1 HUB 🦥</div>
+  <div>Unofficial. Powered by OpenF1, Jolpica, Groq & FastF1.</div>
+  <div style="margin-top:0.5rem;opacity:0.5;">engineered in the slow lane · @ratatoolie</div>
+</footer>
+
+<div class="sid-chat-bubble">
+  <div class="sid-chat-window" id="sidChatWindow">
+    <div class="sid-chat-header">
+      <div class="avatar"><img src="../assets/img/sid.png" alt="Sid" onerror="this.parentElement.innerHTML='<div class=fallback>🦥</div>'" /></div>
+      <div><div class="name">Sid the F1 Sloth</div><div class="status">Film critic mode</div></div>
+    </div>
+    <div class="sid-chat-msgs" id="sidMsgs">
+      <div class="msg msg-sid">Need a recommendation? I've watched all of these. Slowly. Over several years. 🎬🦥</div>
+    </div>
+    <div class="sid-chat-input">
+      <input type="text" id="sidInput" placeholder="Ask Sid…" />
+      <button id="sidSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+    </div>
+  </div>
+  <button class="sid-chat-toggle" id="sidChatToggle">
+    <img src="../assets/img/sid.png" alt="Sid" onerror="this.outerHTML='<span class=fallback-face>🦥</span>'" />
+  </button>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/sid-chat.js"></script>
+<script>
+document.getElementById('navBurger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.media-card').forEach(card => {
+      if (filter === 'all' || card.dataset.type === filter) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    document.querySelectorAll('.section-head').forEach(head => {
+      const next = head.nextElementSibling;
+      if (!next) return;
+      const visible = next.querySelectorAll('.media-card:not(.hidden)').length;
+      head.style.display = (filter === 'all' || visible > 0) ? '' : 'none';
+    });
+  });
+});
+</script>
+</body>
+</html>
