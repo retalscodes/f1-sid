@@ -315,20 +315,29 @@ async function loadTelemetryRounds() {
   const year = document.getElementById('telemYear').value;
   const sel = document.getElementById('telemRound');
   sel.innerHTML = '<option>Loading…</option>';
-  const rounds = await API.getAnalyticsRounds(year);
-  sel.innerHTML = '';
-  if (!rounds || rounds.length === 0) {
-    sel.innerHTML = '<option>No data</option>'; return;
+  try {
+    const rounds = await API.getAnalyticsRounds(year);
+    sel.innerHTML = '';
+    if (!rounds || rounds.error || rounds.length === 0) {
+      const o = document.createElement('option');
+      o.value = '';
+      o.textContent = 'FastF1 loading (try again shortly)';
+      sel.appendChild(o);
+      return;
+    }
+    rounds.forEach(r => {
+      const o = document.createElement('option');
+      o.value = r.round;
+      o.textContent = `R${r.round} — ${r.name}`;
+      sel.appendChild(o);
+    });
+  } catch(e) {
+    sel.innerHTML = '<option value="">FastF1 loading (try again shortly)</option>';
   }
-  rounds.forEach(r => {
-    const o = document.createElement('option');
-    o.value = r.round;
-    o.textContent = `R${r.round} — ${r.name}`;
-    sel.appendChild(o);
-  });
 }
 // Auto-load rounds on page open for telemetry
 document.getElementById('telemYear').addEventListener('change', loadTelemetryRounds);
+loadTelemetryRounds(); // load immediately on page open
 
 async function runComparison() {
   const raw1 = document.getElementById('d1Input').value.trim();

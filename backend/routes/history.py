@@ -127,70 +127,87 @@ async def season_drivers(year: int):
 
 @router.get("/career/{driver_id}")
 async def career_stats(driver_id: str):
-    standings_lists = await jolpica.get_driver_career_standings(driver_id)
-    if not standings_lists:
-        # Fallback: try alternate ID formats (e.g. ayrton_senna → senna)
-        alt_id = driver_id.split("_")[-1] if "_" in driver_id else None
-        if alt_id:
-            standings_lists = await jolpica.get_driver_career_standings(alt_id)
-    if not standings_lists:
-        return {"error": f"No data found for driver '{driver_id}'. Check the Ergast driver ID."}
+    # Build list of IDs to try (handle multi-word like michael_schumacher → schumacher)
+    ids_to_try = [driver_id]
+    if "_" in driver_id:
+        ids_to_try.append(driver_id.split("_")[-1])
 
-    total_wins = 0
-    total_points = 0.0
-    championships = 0
-    best_position = 99
-    seasons_data = []
+    # Find working ID via race win count (most reliable endpoint)
+    working_id = None
+    wins = 0
+    for did in ids_to_try:
+        w = await jolpica.count_driver_results_at_position(did, 1)
+        if w is not None and (w > 0 or did == driver_id):
+            working_id = did
+            wins = w
+            break
 
-    for sl in standings_lists:
-        year = sl.get("season")
-        standings = sl.get("DriverStandings", [])
-        if standings:
-            s = standings[0]
-            wins = int(s.get("wins", 0))
-            pts = float(s.get("points", 0))
-            pos = int(s.get("position", 99))
-            total_wins += wins
-            total_points += pts
-            if pos == 1:
-                championships += 1
-            if pos < best_position:
-                best_position = pos
-            seasons_data.append({"year": year, "position": pos, "wins": wins, "points": pts})
+    if working_id is None:
+        working_id = driver_id
 
-    p2_count = await jolpica.count_driver_results_at_position(driver_id, 2)
-    p3_count = await jolpica.count_driver_results_at_position(driver_id, 3)
-    podiums = total_wins + p2_count + p3_count
+    # Verify driver exists — total race starts
+    total_starts = await jolpica.count_driver_results_at_position(working_id, 1)
+    # If wins came back 0, also check if any results exist at all via P2
+    p2 = await jolpica.count_driver_results_at_position(working_id, 2)
+    p3 = await jolpica.count_driver_results_at_position(working_id, 3)
 
-    driver_info = {}
-    for sl in standings_lists:
-        first_standings = sl.get("DriverStandings", [])
-        if first_standings:
-            d = first_standings[0].get("Driver", {})
-            if d:
-                driver_info = {
-                    "givenName": d.get("givenName", ""),
-                    "familyName": d.get("familyName", driver_id),
-                    "nationality": d.get("nationality", ""),
-                    "dateOfBirth": d.get("dateOfBirth", ""),
-                    "driverId": d.get("driverId", driver_id),
-                }
+    # If no data found, try remaining IDs
+    if wins == 0 and p2 == 0 and p3 == 0:
+        for did in ids_to_try[1:]:
+            w2 = await jolpica.count_driver_results_at_position(did, 1)
+            p2b = await jolpica.count_driver_results_at_position(did, 2)
+            p3b = await jolpica.count_driver_results_at_position(did, 3)
+            if w2 > 0 or p2b > 0 or p3b > 0:
+                working_id = did
+                wins, p2, p3 = w2, p2b, p3b
                 break
 
-    seasons_sorted = sorted(seasons_data, key=lambda x: x["year"])
-    first_season = seasons_sorted[0]["year"] if seasons_sorted else "—"
-    last_season = seasons_sorted[-1]["year"] if seasons_sorted else "—"
+    if wins == 0 and p2 == 0 and p3 == 0:
+        return {"error": f"No data found for driver '{driver_id}'. Check the Ergast driver ID."}
+
+    podiums = wins + p2 + p3
+
+    # Championship seasons (P1 in final standings)
+    champ_seasons = await jolpica.get_driver_championship_seasons(working_id)
+    championships = len(champ_seasons)
+
+    # All seasons competed
+    season_years = await jolpica.get_driver_season_years(working_id)
+    seasons_count = len(season_years)
+    first_season = season_years[0] if season_years else "—"
+    last_season = season_years[-1] if season_years else "—"
+
+    # Driver info (name, nationality)
+    driver_info = await jolpica.get_driver_info(working_id)
+
+    # Career points from standings (best effort)
+    standings_lists = await jolpica.get_driver_career_standings(working_id)
+    total_points = 0.0
+    best_position = 99
+    seasons_data = []
+    for sl in standings_lists:
+        yr = sl.get("season")
+        standing = sl.get("DriverStandings", [])
+        if standing:
+            s = standing[0]
+            pts = float(s.get("points", 0))
+            pos = int(s.get("position", 99))
+            w = int(s.get("wins", 0))
+            total_points += pts
+            if pos < best_position:
+                best_position = pos
+            seasons_data.append({"year": yr, "position": pos, "wins": w, "points": pts})
 
     return {
-        "driver_id": driver_id,
+        "driver_id": working_id,
         "driver": driver_info,
         "championships": championships,
-        "wins": total_wins,
+        "wins": wins,
         "podiums": podiums,
         "points": round(total_points, 1),
-        "seasons_count": len(seasons_data),
+        "seasons_count": seasons_count,
         "first_season": first_season,
         "last_season": last_season,
-        "best_championship": best_position if seasons_data else 99,
-        "seasons": seasons_sorted,
+        "best_championship": best_position if seasons_data else (1 if championships > 0 else 99),
+        "seasons": sorted(seasons_data, key=lambda x: x["year"]),
     }

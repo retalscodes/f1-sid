@@ -143,3 +143,73 @@ async def count_driver_results_at_position(driver_id: str, position: int) -> int
     total = int(raw.get("MRData", {}).get("total", 0))
     _cache[cache_key] = (total, time.time())
     return total
+
+
+async def get_driver_championship_seasons(driver_id: str) -> list:
+    """Returns list of seasons where driver finished P1 in standings."""
+    path = f"/drivers/{driver_id}/driverStandings/1"
+    if path in _cache:
+        data, ts = _cache[path]
+        if time.time() - ts < 3600:
+            return data
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(f"{BASE}{path}.json?limit=50")
+            r.raise_for_status()
+            raw = r.json()
+        lists = raw.get("MRData", {}).get("StandingsTable", {}).get("StandingsLists", [])
+    except Exception:
+        lists = []
+    _cache[path] = (lists, time.time())
+    return lists
+
+
+async def get_driver_info(driver_id: str) -> dict:
+    """Fetch basic driver info from their most recent race result."""
+    path = f"/drivers/{driver_id}/results"
+    cache_key = f"{path}_info"
+    if cache_key in _cache:
+        data, ts = _cache[cache_key]
+        if time.time() - ts < 3600:
+            return data
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(f"{BASE}{path}.json?limit=1")
+            r.raise_for_status()
+            raw = r.json()
+        races = raw.get("MRData", {}).get("RaceTable", {}).get("Races", [])
+        if races and races[0].get("Results"):
+            d = races[0]["Results"][0].get("Driver", {})
+            info = {
+                "givenName": d.get("givenName", ""),
+                "familyName": d.get("familyName", driver_id),
+                "nationality": d.get("nationality", ""),
+                "dateOfBirth": d.get("dateOfBirth", ""),
+                "driverId": d.get("driverId", driver_id),
+            }
+        else:
+            info = {}
+    except Exception:
+        info = {}
+    _cache[cache_key] = (info, time.time())
+    return info
+
+
+async def get_driver_season_years(driver_id: str) -> list:
+    """Returns list of season years the driver competed in."""
+    path = f"/drivers/{driver_id}/seasons"
+    if path in _cache:
+        data, ts = _cache[path]
+        if time.time() - ts < 3600:
+            return data
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(f"{BASE}{path}.json?limit=100")
+            r.raise_for_status()
+            raw = r.json()
+        seasons = raw.get("MRData", {}).get("SeasonTable", {}).get("Seasons", [])
+        years = [s["season"] for s in seasons]
+    except Exception:
+        years = []
+    _cache[path] = (years, time.time())
+    return years
